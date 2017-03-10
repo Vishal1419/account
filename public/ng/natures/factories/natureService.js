@@ -46,7 +46,7 @@ angular
         }
 
         function remove(nature, callback) {
-            $http.delete('/api/nature/' + nature._id + '/' + nature.name.replace(/\//g,'%2F'), nature)
+            $http.delete('/api/nature/' + nature._id + '/' + encodeURL(nature.name), nature)
                  .then(function (response) {
                      //Clear errors
                      callback(response);

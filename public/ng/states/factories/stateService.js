@@ -53,7 +53,7 @@ angular
         }
 
         function remove(state, callback) {
-            $http.delete('/api/state/' + state._id + '/' + state.name.replace(/\//g,'%2F'), state)
+            $http.delete('/api/state/' + state._id + '/' + encodeURL(state.name), state)
                  .then(function (response) {
                      //Clear errors
                      callback(response);

@@ -46,7 +46,7 @@ angular
         }
 
         function remove(effect, callback) {
-            $http.delete('/api/effect/' + effect._id + '/' + effect.name.replace(/\//g,'%2F'), effect)
+            $http.delete('/api/effect/' + effect._id + '/' + encodeURL(effect.name), effect)
                  .then(function (response) {
                      //Clear errors
                      callback(response);

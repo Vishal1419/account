@@ -47,7 +47,7 @@ angular
         }
 
         function remove(country, callback) {
-            $http.delete('/api/country/' + country._id + '/' + country.name.replace(/\//g,'%2F'), country)
+            $http.delete('/api/country/' + country._id + '/' + encodeURL(country.name), country)
                  .then(function (response) {
                      //Clear errors
                      callback(response);

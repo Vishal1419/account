@@ -10,9 +10,9 @@ angular
                     var value = modelValue || viewValue;
 
                     if (typeof value === 'string' || value instanceof String) {
-                        value = value.replace(/\//g,'%2F').replace(/\(/g,'%28').replace(/\)/g,'%29');
+                        value = encodeURL(value);
                     } else {
-                        value = value.name.replace(/\//g,'%2F').replace(/\(/g,'%28').replace(/\)/g,'%29');
+                        value = encodeURL(value.name);
                     }
 
                     var attributes = scope.$eval(attrs.uniqueRecord);
@@ -24,7 +24,7 @@ angular
                     if(attributes.currentRecordName == undefined || attributes.currentRecordName == '') {
                         attributes.currentRecordName = '_';
                     } else {
-                        attributes.currentRecordName = attributes.currentRecordName.replace(/\//g,'%2F').replace(/\(/g,'%28').replace(/\)/g,'%29');
+                        attributes.currentRecordName = encodeURL(attributes.currentRecordName);
                     }
 
                     if(attributes.reverse == undefined) {

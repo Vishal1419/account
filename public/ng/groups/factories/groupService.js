@@ -46,7 +46,7 @@ angular
         }
 
         function remove(group, callback) {
-            $http.delete('/api/group/' + group._id + '/' + group.name.replace(/\//g,'%2F'), group)
+            $http.delete('/api/group/' + group._id + '/' + encodeURL(group.name), group)
                  .then(function (response) {
                      //Clear errors
                      callback(response);

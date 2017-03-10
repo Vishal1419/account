@@ -1,0 +1,29 @@
+<div class="col-md-4 col-md-offset-4">
+    <div ng-controller="natureController">
+        <flash-message></flash-message>        
+        <div class="row">
+            <div class="col-md-1">
+                <button type="button" class="btn btn-primary btn-list btn-list-fix" ng-click="listNatures()"></button>
+            </div>
+        </div>
+        <div class="row">
+            <form name="natureForm" ng-submit="submit(nature)" novalidate>
+                <div class="form-group">
+                    <label for="name" class="control-label">Name</label>
+                    <input type="text" id="name" name="name" class="form-control form-input" ng-model="nature.name"
+                            ng-disabled="isReadOnly" autocomplete="off"
+                            required 
+                            unique-record="{ url: '/api/nature', currentRecordName: currentNatureName }"
+                            ng-required-err-type="requiredNature"
+                            ng-uniqueRecord-err-type="uniqueNature" />
+                </div>
+                <div class="row">
+                    <div class="form-group form-controls">
+                        <button id="submit" type="submit" class="btn btn-success btn-input submit" ng-hide="isReadOnly">Save</button>
+                        <button id="clear" type="reset" class="btn btn-input clear" ng-class="isReadOnly ? 'btn-primary' : 'btn-danger'" ng-click="clear()">{{clearButtonText}}</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

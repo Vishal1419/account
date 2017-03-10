@@ -1,0 +1,59 @@
+<div class="col-md-10 col-md-offset-1">
+    <div ng-controller="groupController">
+        <flash-message></flash-message>        
+        <div class="row">
+            <div class="col-md-8 pull-bottom">
+                <input type="text" placeholder="Search" class="form-control form-input" ng-model="searchText"/>
+                <!--Fileter on multiple properties-->
+                <br />
+            </div>
+            <button type="button" class="btn btn-success btn-print btn-print-fix pull-right"></button>
+            <button type="button" class="btn btn-success btn-add btn-add-fix pull-right" ng-click="create()"></button>
+        </div>
+        <table class="stylable" col-resizable>
+            <thead>
+                <tr>
+                    <th ng-click="sortData('name')">
+                        Group Name <div ng-class="getSortClass('name')"></div>
+                    </th>
+                    <th ng-click="sortData('parent.name')">
+                        Parent Group <div ng-class="getSortClass('parent.name')"></div>
+                    </th>
+                    <th ng-click="sortData('effect.name')">
+                        Effect on <div ng-class="getSortClass('effect.name')"></div>
+                    </th>
+                    <th ng-click="sortData('nature.name')">
+                        Nature of Group <div ng-class="getSortClass('nature.name')"></div>
+                    </th>
+                    <th class="col-actions">Edit</th>
+                    <th class="col-actions">Show</th>
+                    <th class="col-actions">Delete</th>
+                    <th class="col-actions">Print</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="group in groups | orderBy : sortColumn : reverseSort | filter : searchItem">
+                    <td> {{group.name}} <br /> {{group.alias}} </td>
+                    <td> {{group.parent.name}} </td>
+                    <td> {{group.effect.name}} </td>
+                    <td> {{group.nature.name}} </td>
+                    <td class="col-actions">
+                        <button type="button" class="btn btn-info btn-edit" ng-click="editGroup(group, false)" ng-disabled="group.isSystemGroup"></button>
+                    </td>
+                    <td class="col-actions">
+                        <button type="button" class="btn btn-info btn-show" ng-click="editGroup(group, true)"></button>
+                    </td>
+                    <td class="col-actions">
+                        <button type="button" class="btn btn-danger btn-delete" 
+                                mw-confirm-click="deleteGroup(group)" 
+                                mw-confirm-click-message="Delete this group?"
+                                ng-disabled="group.isSystemGroup"></button>
+                    </td>
+                    <td class="col-actions">
+                        <button type="button" class="btn btn-success btn-print"></button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

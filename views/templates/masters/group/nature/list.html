@@ -1,0 +1,44 @@
+<div class="col-md-10 col-md-offset-1">
+    <div ng-controller="natureController">
+        <flash-message></flash-message>        
+        <div class="row">
+            <div class="col-md-8 pull-bottom">
+                <input type="text" placeholder="Search" class="form-control form-input" ng-model="searchText.name"/>
+                <br />
+            </div>
+            <button type="button" class="btn btn-success btn-print btn-print-fix pull-right"></button>
+            <button type="button" class="btn btn-success btn-add btn-add-fix pull-right" ng-click="create()"></button>
+        </div>
+        <table class="stylable" col-resizable>
+            <thead>
+                <tr>
+                    <th ng-click="sortData('name')">
+                        Nature Name <div ng-class="getSortClass('name')"></div>
+                    </th>
+                    <th class="col-actions">Edit</th>
+                    <th class="col-actions">Show</th>
+                    <th class="col-actions">Delete</th>
+                    <th class="col-actions">Print</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="nature in natures | orderBy : sortColumn : reverseSort | filter : searchText">
+                    <td> {{nature.name}} </td>
+                    <td class="col-actions">
+                        <button type="button" class="btn btn-info btn-edit" ng-click="editNature(nature, false)"></button>
+                    </td>
+                    <td class="col-actions">
+                        <button type="button" class="btn btn-info btn-show" ng-click="editNature(nature, true)"></button>
+                    </td>
+                    <td class="col-actions">
+                        <button type="button" class="btn btn-danger btn-delete" 
+                                mw-confirm-click="deleteNature(nature)" mw-confirm-click-message="Delete this nature?"></button>
+                    </td>
+                    <td class="col-actions">
+                        <button type="button" class="btn btn-success btn-print"></button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

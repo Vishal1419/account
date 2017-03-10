@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Make Account</title>
+    <base href="/"></base>
+    <link rel="stylesheet" href="css/vendors/bootstrap/code/bootstrap.css" />
+    <link rel="stylesheet" href="css/vendors/angular-flash.css" />
+    <link rel="stylesheet" href="css/vendors/datepicker.css" />
+    <link rel="stylesheet" href="css/vendors/typeahead.css" />
+    <link rel='stylesheet' href='css/stylable.css' />
+    <link rel='stylesheet' href='css/main.css' />
+  </head>
+  <body ng-app="accountApp">
+
+    <a href="/effect/create">Effect</a>
+    <a href="/nature/create">Nature</a>
+    <a href="/group/create">Group</a>
+    <a href="/country/create">Country</a>
+    <a href="/state/create">State</a>
+
+    <div ng-view></div>
+
+    <script src="js/vendors/jquery-3.1.0.min.js"></script>
+    <script src="js/vendors/bootstrap.js"></script>
+    <script src="js/vendors/angular-1.5.8.js"></script>
+    <script src="js/vendors/angular-route-1.5.8.js"></script>
+    <script src="js/vendors/angular-animate-1.5.8.js"></script>
+    <script src="js/vendors/ui-bootstrap-tpls-2.0.1.js"></script>
+    <script src="js/vendors/bootstrap-datepicker.js"></script>
+    <script src="js/vendors/colResizable.js"></script>
+    <script src="js/vendors/angular-flash.js"></script>
+    <script src="/auto-validate/jcs-auto-validate.js"></script>    
+    <script src="ng/modules.js"></script>
+    <script src="ng/general/factories/typeaheadService.js"></script>
+    <script src="ng/general/filters/typeaheadFilter.js"></script>
+    <script src="ng/general/filters/newLineFilter.js"></script>
+    <script src="ng/general/directives/colResizable.js"></script>
+    <script src="ng/general/directives/mwConfirmClick.js"></script>
+    <script src="ng/general/directives/uniqueRecord.js"></script>
+    <script src="ng/effects/routes.js"></script>
+    <script src="ng/effects/factories/effectService.js"></script>
+    <script src="ng/effects/controllers/effectController.js"></script>
+    <script src="ng/natures/routes.js"></script>
+    <script src="ng/natures/factories/natureService.js"></script>
+    <script src="ng/natures/controllers/natureController.js"></script>
+    <script src="ng/groups/routes.js"></script>
+    <script src="ng/groups/factories/groupService.js"></script>
+    <script src="ng/groups/controllers/groupController.js"></script>
+    <script src="ng/countries/routes.js"></script>
+    <script src="ng/countries/factories/countryService.js"></script>
+    <script src="ng/countries/controllers/countryController.js"></script>
+    <script src="ng/states/routes.js"></script>
+    <script src="ng/states/factories/stateService.js"></script>
+    <script src="ng/states/controllers/stateController.js"></script>
+    <script src="js/main.js"></script>
+
+  </body>
+</html>

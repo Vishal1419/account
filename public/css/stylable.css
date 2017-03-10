@@ -1,0 +1,180 @@
+.pull-bottom {
+    margin-top: 30px;
+}
+
+.btn-list,
+.btn-add,
+.btn-edit,
+.btn-show,
+.btn-delete,
+.btn-print
+{
+    position: relative;
+    margin: 5px;
+    border: none;
+    width: 50%;
+    padding: 0;
+    padding-bottom: 50%;
+    height: 0;
+    background-size: contain;
+}
+
+.btn-list-fix,
+.btn-add-fix,
+.btn-print-fix {
+    width: 48px;
+    padding-bottom: 48px;
+    margin-right: 40px;
+    margin-top: 20px;
+}
+
+.btn-list {
+    background-image: url(../images/List.png);
+}
+
+.btn-add {
+    background-image: url(../images/Add.png);
+}
+
+.btn-edit {
+    background-image: url(../images/Edit.png);
+}
+
+.btn-show {
+    background-image: url(../images/Show.png);
+}
+
+.btn-delete {
+    background-image: url(../images/Delete.png);
+}
+
+.btn-print {
+    background-image: url(../images/Print.png);
+}
+
+.btn-list:disabled,
+.btn-add:disabled,
+.btn-edit:disabled,
+.btn-show:disabled,
+.btn-delete:disabled,
+.btn-print:disabled
+{
+    background-color: #A2A2A2;
+    box-shadow: 0px 0px 10px #888888;
+}
+
+table.stylable {
+    text-align: center;
+    width: calc(100% - 17px);
+}
+
+.table-wrapper {
+  overflow-y: auto;
+}
+
+table.stylable th {
+    padding: 5px 0;
+    text-align: center;
+    background-color: #353535;
+    color: white;
+    border-right: 1px solid #DDD;
+    height: 40px;
+    cursor: pointer;
+    cursor: hand;
+}
+
+table.stylable tr {
+    background-color: #EEE;
+}
+
+table.stylable td {
+  background-color: transparent;
+  border-right: 1px solid #DDD;
+}
+table.stylable th:last-child,
+table.stylable td:last-child {
+    border-right: 0px;
+}
+
+table.stylable tr th:first-child {
+    border-top-left-radius: 6px;
+}
+
+table.stylable tr th:last-child {
+    border-top-right-radius: 6px;
+}
+
+table.stylable tr:last-child td:first-child {
+    border-bottom-left-radius: 6px;
+}
+
+table.stylable tr:last-child td:last-child {
+    border-bottom-right-radius: 6px;
+}
+
+table.stylable tr:hover:not(.row-details):not(.selected) {
+    background-color: #AAA;
+    color: white;
+}
+
+table.stylable tr.selected {
+    background-color: #777;
+    color: white;
+}
+
+table.stylable tr:hover td {
+    background-color: transparent;
+}
+
+table.stylable tr.selected td {
+    background-color: transparent;
+}
+
+table.stylable td,
+table.stylable th
+{
+    padding: 3px 8px;
+    min-width: 65px;
+}
+
+.invisible{
+  display: none;
+}
+
+.btn-search
+{
+    height: 140%;
+}
+
+.col-actions
+{
+    max-width: 80px;
+    min-width: 65px;
+    width: 80px;
+}
+
+table {
+    width: 100%;
+}
+
+/*Table header sort arrows*/
+
+.arrow-up
+{
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 10px solid white;
+    display: inline-block;
+}
+
+.arrow-down
+{
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 10px solid white;
+    display: inline-block;
+}

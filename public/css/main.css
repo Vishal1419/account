@@ -1,0 +1,53 @@
+/**
+{
+    zoom: 1.05;
+}*/
+
+.container-fluid
+{
+    padding: 0px 40px 0px 50px;
+}
+
+
+/* 
+ *------------------------------
+ *    Main Content Area
+ *------------------------------
+ */
+
+.content
+{
+    margin-top: 50px;
+}
+
+.form-controls
+{
+    text-align: right;
+}
+
+/* 
+ *------------------------------
+ *    uib-typeahead styles
+ *------------------------------
+ */
+
+.dropdown-menu
+{
+    overflow-y: auto;
+    width: 100%;
+    max-height: 200px;
+}
+
+/* 
+ *------------------------------
+ *    col-resizable styles
+ *------------------------------
+ */
+
+.grip{
+    cursor:e-resize;
+}
+
+flash-message {
+    z-index: 100000;
+}

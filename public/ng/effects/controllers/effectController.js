@@ -1,6 +1,6 @@
 angular
     .module('effectApp')
-    .controller("effectController", function(Flash, $scope, $http, $location, effectService, localStorageService) {
+    .controller("effectController", function(Flash, $scope, $http, $location, $route, effectService, localStorageService) {
 
         var ls = localStorageService;
 

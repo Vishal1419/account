@@ -1,6 +1,6 @@
 angular
     .module('countryApp')
-    .controller("countryController", function(Flash, $scope, $http, $location, countryService, localStorageService) {
+    .controller("countryController", function(Flash, $scope, $http, $location, $route, countryService, localStorageService) {
 
         var ls = localStorageService;
 

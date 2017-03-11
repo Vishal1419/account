@@ -1,6 +1,6 @@
 angular
     .module('groupApp')
-    .controller("groupController", function(Flash, $scope, $http, $location, groupService, localStorageService) {
+    .controller("groupController", function(Flash, $scope, $http, $location, $route, groupService, localStorageService) {
 
         var ls = localStorageService;
 

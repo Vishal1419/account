@@ -29,6 +29,7 @@ angular.module('groupApp', ['ngRoute', 'jcs-autoValidate', 'ngFlash', 'LocalStor
                 errorMessages['requiredGroup'] = "Group name is required";
                 errorMessages['requiredParentGroup'] = "Parent group is required";
                 errorMessages['noGroupFound'] = "Choose group from the list";
+                errorMessages['parentNotAllowed'] = "Group name and Parent group name should be different";
            });
        })
        .config(function (localStorageServiceProvider) {

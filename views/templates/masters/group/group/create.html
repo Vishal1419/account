@@ -30,9 +30,11 @@
                             uib-typeahead="group as group.name for group in groups | typeaheadFilter:{'name':$viewValue} | orderBy:smartOrder" 
                             typeahead-template-url="group-template.html"
                             required
-                            unique-record="{ url: '/api/group', currentRecordName: currentGroupName, reverse: true }"
+                            unique-record="{ url: '/api/group', reverse: true }"
+                            match-to="group.name"
                             ng-required-err-type="requiredParentGroup"
-                            ng-uniqueRecord-err-type="noGroupFound" />
+                            ng-uniqueRecord-err-type="noGroupFound"
+                            ng-matchTo-err-type="parentNotAllowed" />
                 </div>
                 <div class="row">
                     <div class="form-group form-controls">

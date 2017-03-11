@@ -1,6 +1,6 @@
 angular
     .module('natureApp')
-    .controller("natureController", function(Flash, $scope, $http, $location, natureService, localStorageService) {
+    .controller("natureController", function(Flash, $scope, $http, $location, $route, natureService, localStorageService) {
 
         var ls = localStorageService;
 

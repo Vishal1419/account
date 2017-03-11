@@ -10,8 +10,8 @@ router.get('/', function(req, res, next) {
 
     //retrieve all states from State model
     State.getAllStates(function(err, states) {
-        if(err) { console.error(err); }
-        else { res.json(states); }
+        if(err) { res.status(400).json(err); }
+        else { res.status(200).json(states); }
     });
 
 });
@@ -22,8 +22,8 @@ router.get('/:id', function(req, res, next){
 
   State.getStateById(stateId, function(err, state) {
  
-        if (err) { return console.error(err); } 
-        else { res.json(state); }
+        if (err) { return res.status(400).json(err); } 
+        else { res.status(200).json(state); }
 
   });
 
@@ -37,7 +37,7 @@ router.get('/:name/:currentStateName', function(req, res, next){
   State.getStateByName(stateName, function(err, state) {
  
         if (err) {
-            return console.error(err);
+            return res.status(400).json(err);
         } else { 
             if(!(state == undefined || state.length < 1 || cs(stateName, currentStateName, true, false))) { res.status(200).json(state); }
             else { res.status(404).json(state); }
@@ -57,7 +57,7 @@ router.post('/', function(req, res){
         State.getAllStates(function(err, states) {
     
             if (err) {
-                next(err);
+                res.status(400).json(err);
             } 
 
             req.checkBody('name', 'State name is required.').notEmpty();
@@ -110,7 +110,7 @@ router.put('/:id', function(req, res, next) {
             State.getStateById(id, function(err, originalState) {
 
                 if (err) {
-                    next(err);
+                    res.status(400).json(err);
                 } 
 
                 req.checkBody('name', 'State name is required.').notEmpty();

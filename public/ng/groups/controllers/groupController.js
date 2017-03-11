@@ -6,10 +6,55 @@ angular
 
         //When controller is refreshed, get necessary data back from service
 
-        $scope.group = ls.get('group');
-        $scope.currentGroupName = ls.get('currentGroupName');
-        $scope.isReadOnly = ls.get('isReadOnly');
-        $scope.clearButtonText = ls.get('clearButtonText');
+        if($route.current.originalPath == '/group/create') {
+            
+            $scope.group = null;
+            ls.remove('group');
+            $scope.currentGroupName == '';
+            ls.remove('currentGroupName');
+            $scope.clearButtonText = 'Clear';
+            $scope.isReadOnly = false;
+
+        } else if($route.current.originalPath == '/group/edit/:id') {
+
+            $scope.group = ls.get('group');
+            $scope.currentGroupName = ls.get('currentGroupName');
+            $scope.isReadOnly = false;
+            $scope.clearButtonText = 'Cancel';
+
+            var id = $route.current.params.id;
+            groupService.getById(id).then(function(group) {
+                console.log(group);
+                if(group[0] == undefined) {
+                    $location.path('/groups');
+                }
+            });
+
+        } else if($route.current.originalPath == '/group/view/:id') {
+
+            $scope.group = ls.get('group');
+            $scope.currentGroupName = ls.get('currentGroupName');
+            $scope.isReadOnly = true;
+            $scope.clearButtonText = 'OK';
+
+            var id = $route.current.params.id;
+            groupService.getById(id).then(function(group) {
+                console.log(group);
+                if(group[0] == undefined) {
+                    $location.path('/groups');
+                }
+            });
+
+        } else {
+
+            $scope.group = null;
+            ls.remove('group');
+            $scope.currentGroupName == '';
+            ls.remove('currentGroupName');
+            $scope.isReadOnly = false;
+            $scope.clearButtonText = '';
+
+        }
 
         var reload = function() {
             groupService.fetch()
@@ -21,20 +66,20 @@ angular
         reload();
 
         $scope.create = function() {
-            ls.remove('group');
-            ls.set('isReadOnly', false);
-            ls.set('clearButtonText', 'Clear');
             $location.path('/group/create');            
         }
 
         $scope.clear = function() {
+            
             var group = $scope.group;
+            
             $scope.currentGroupName = '';
             ls.remove('currentGroupName');
             $scope.group = null;
-            $scope.isReadOnly = false;
             ls.remove('group');
-            ls.set('isReadOnly', $scope.isReadOnly);
+
+            $scope.isReadOnly = false;
+            
             if(!(group == null || group._id == undefined || group._id == null)) {
                 $location.path('/groups');
             }
@@ -50,15 +95,12 @@ angular
             ls.set('currentGroupName', $scope.currentGroupName);
             $scope.group = group;
             ls.set('group', $scope.group);
-            ls.set('isReadOnly', $scope.isReadOnly)
             
             if(isReadOnly) {
-                ls.set('clearButtonText', 'OK');
+                $location.path('/group/view/' + group._id);
             } else {
-                ls.set('clearButtonText', 'Cancel');
-            }
-            
-            $location.path('/group/edit');
+                $location.path('/group/edit/' + group._id);
+            }     
         
         }
 
@@ -74,11 +116,11 @@ angular
                 
                     $scope.group = null;
                     ls.remove('group');
-                    groupService.store($scope.group, $scope.isReadOnly);
+
                     if(!(group == null || group == undefined)) {
                         if(!(group._id == undefined || group._id == '')) {
                             $scope.currentGroupName = '';                         
-                            ls.set('currentGroupName', $scope.currentGroupName);
+                            ls.remove('currentGroupName');
                             $location.path('/groups');
                         }
                     }

@@ -11,8 +11,8 @@ router.get('/', function(req, res, next) {
 
     //retrieve all groups from Group model
     Group.getAllGroups(function(err, groups) {
-        if(err) { console.error(err); }
-        else { res.json(groups); }
+        if(err) { res.status(400).json(err); }
+        else { res.status(200).json(groups); }
     });
 
 });
@@ -23,8 +23,8 @@ router.get('/:id', function(req, res, next){
 
   Group.getGroupById(groupId, function(err, group) {
  
-        if (err) { return console.error(err); } 
-        else { res.json(group); }
+        if (err) { return res.status(400).json(err); } 
+        else { res.status(200).json(group); }
 
   });
 
@@ -38,7 +38,7 @@ router.get('/:name/:currentGroupName', function(req, res, next){
   Group.getGroupByName(groupName, function(err, group) {
  
         if (err) {
-            return console.error(err);
+            return res.status(400).json(err);
         } else { 
             if(!(group == undefined || group.length < 1 || cs(groupName, currentGroupName, true, false))) { res.status(200).json(group); }
             else { res.status(404).json(group); }
@@ -57,7 +57,7 @@ router.post('/', function(req, res){
     Group.getAllGroups(function(err, groups) {
   
         if (err) {
-            next(err);
+            res.status(400).json(err);
         } 
 
         req.checkBody('name', 'Group name is required.').notEmpty();
@@ -118,7 +118,7 @@ router.put('/:id', function(req, res, next) {
         Group.getGroupById(id, function(err, originalGroup) {
 
             if (err) {
-                next(err);
+                res.status(400).json(err);
             } 
 
             req.checkBody('name', 'Group name is required.').notEmpty();

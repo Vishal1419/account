@@ -8,8 +8,8 @@ router.get('/', function(req, res, next) {
 
     //retrieve all effects from Effect model
     Effect.getAllEffects(function(err, effects) {
-        if(err) { return console.error(err); }
-        else { res.json(effects); }
+        if(err) { return res.status(400).json(err); }
+        else { res.status(200).json(effects); }
     });
 
 });
@@ -21,8 +21,8 @@ router.get('/:id', function(req, res, next){
   Effect.getEffectById(effectId, function(err, effect) {
  
         if (err) {
-            return console.error(err);
-        } else { res.json(effect); }
+            return res.status(400).json(err);
+        } else { res.status(200).json(effect); }
 
   });
 
@@ -36,7 +36,7 @@ router.get('/:name/:currentEffectName', function(req, res, next){
   Effect.getEffectByName(effectName, function(err, effect) {
  
         if (err) {
-            return console.error(err);
+            return res.status(400).json(err);
         } else { 
             if(!(effect == undefined || effect.length < 1 || cs(effectName, currentEffectName, true, false))) { res.status(200).json(effect); }
             else { res.status(404).json(effect); }
@@ -53,7 +53,7 @@ router.post('/', function(req, res, next){
     Effect.find(function(err, effects) {
 
         if(err){
-            next(err);
+            res.status(400).json(err);
         }
 
         req.checkBody('name', 'Effect name is required.').notEmpty();
@@ -89,7 +89,7 @@ router.put('/:id', function(req, res, next) {
         Effect.find({_id: id}, function(err, originalEffect) {
 
             if(err){
-                next(err);
+                res.status(400).json(err);
             }
 
             req.checkBody('name', 'Effect name is required.').notEmpty();

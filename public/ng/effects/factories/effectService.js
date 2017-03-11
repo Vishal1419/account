@@ -1,7 +1,7 @@
 angular
     .module('effectApp')
     .factory('effectService', function($http) {
-        var factory = { fetch: fetch, save: save, remove: remove };
+        var factory = { fetch: fetch, getById: getById, save: save, remove: remove };
 
         return factory; 
 
@@ -12,6 +12,13 @@ angular
             return $http.get('/api/effect')
                         .then(function(response) {
                             return response.data;
+                        });
+        }
+
+        function getById(id) {
+            return $http.get('/api/effect/' + id)
+                        .then(function(effect) {
+                            return effect.data;
                         });
         }
 
@@ -48,4 +55,3 @@ angular
         }
 
     });
-

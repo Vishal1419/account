@@ -8,8 +8,8 @@ router.get('/', function(req, res, next) {
 
     //retrieve all countries from Country model
     Country.getAllCountries(function(err, countries) {
-        if(err) { return console.error(err); }
-        else { res.json(countries); }
+        if(err) { return res.status(400).json(err); }
+        else { res.status(200).json(countries); }
     });
 
 });
@@ -21,8 +21,8 @@ router.get('/:id', function(req, res, next){
   Country.getCountryById(countryId, function(err, country) {
  
         if (err) {
-            return console.error(err);
-        } else { res.json(country); }
+            return res.status(400).json(err);
+        } else { res.status(200).json(country); }
 
   });
 
@@ -36,7 +36,7 @@ router.get('/:name/:currentCountryName', function(req, res, next){
   Country.getCountryByName(countryName, function(err, country) {
  
         if (err) {
-            return console.error(err);
+            return res.status(400).json(err);
         } else { 
             if(!(country == undefined || country.length < 1 || cs(countryName, currentCountryName, true, false))) { res.status(200).json(country); }
             else { res.status(404).json(country); }
@@ -54,7 +54,7 @@ router.get('/code/:code/:currentCountryCode', function(req, res, next){
   Country.getCountryByCode(countryCode, function(err, country) {
  
         if (err) {
-            return console.error(err);
+            return res.status(400).json(err);
         } else { 
             if(!(country == undefined || country.length < 1 || cs(countryCode, currentCountryCode, true, false))) { res.status(200).json(country); }
             else { res.status(404).json(country); }
@@ -72,7 +72,7 @@ router.post('/', function(req, res, next){
     Country.find(function(err, countries) {
 
         if(err){
-            next(err);
+            res.status(400).json(err);
         }
 
         req.checkBody('name', 'Country name is required.').notEmpty();
@@ -112,7 +112,7 @@ router.put('/:id', function(req, res, next) {
         Country.find({_id: id}, function(err, originalCountry) {
 
             if(err){
-                next(err);
+                res.status(400).json(err);
             }
 
             req.checkBody('name', 'Country name is required.').notEmpty();

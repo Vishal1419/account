@@ -1,15 +1,61 @@
 angular
     .module('stateApp')
-    .controller("stateController", function(Flash, $scope, $http, $location, stateService, localStorageService) {
+    .controller("stateController", function(Flash, $scope, $http, $location, $route, stateService, localStorageService) {
 
         var ls = localStorageService;
 
         //When controller is refreshed, get necessary data back from service
 
-        $scope.state = ls.get('state');
-        $scope.currentStateName = ls.get('currentStateName');
-        $scope.isReadOnly = ls.get('isReadOnly');
-        $scope.clearButtonText = ls.get('clearButtonText');
+        if($route.current.originalPath == '/state/create') {
+            
+            $scope.state = null;
+            ls.remove('state');
+            $scope.currentStateName == '';
+            ls.remove('currentStateName');
+            $scope.clearButtonText = 'Clear';
+            $scope.isReadOnly = false;
+
+        } else if($route.current.originalPath == '/state/edit/:id') {
+
+            $scope.state = ls.get('state');
+            $scope.currentStateName = ls.get('currentStateName');
+            $scope.isReadOnly = false;
+            $scope.clearButtonText = 'Cancel';
+
+            var id = $route.current.params.id;
+            stateService.getById(id).then(function(state) {
+                console.log(state);
+                if(state[0] == undefined) {
+                    $location.path('/states');
+                }
+            });
+
+        } else if($route.current.originalPath == '/state/view/:id') {
+
+            $scope.state = ls.get('state');
+            $scope.currentStateName = ls.get('currentStateName');
+            $scope.isReadOnly = true;
+            $scope.clearButtonText = 'OK';
+
+            var id = $route.current.params.id;
+            stateService.getById(id).then(function(state) {
+                console.log(state);
+                if(state[0] == undefined) {
+                    $location.path('/states');
+                }
+            });
+
+        } else {
+
+            $scope.state = null;
+            ls.remove('state');
+            $scope.currentStateName == '';
+            ls.remove('currentStateName');
+            $scope.isReadOnly = false;
+            $scope.clearButtonText = '';
+
+        }
+
 
         var reload = function() {
             stateService.fetch()
@@ -25,20 +71,20 @@ angular
         reload();
 
         $scope.create = function() {
-            ls.remove('state');
-            ls.set('isReadOnly', false);
-            ls.set('clearButtonText', 'Clear');
             $location.path('/state/create');            
         }
 
         $scope.clear = function() {
+            
             var state = $scope.state;
+            
             $scope.currentStateName = '';
             ls.remove('currentStateName');
             $scope.state = null;
-            $scope.isReadOnly = false;
             ls.remove('state');
-            ls.set('isReadOnly', $scope.isReadOnly);
+            
+            $scope.isReadOnly = false;
+            
             if(!(state == null || state._id == undefined || state._id == null)) {
                 $location.path('/states');
             }
@@ -56,15 +102,12 @@ angular
             ls.set('currentStateName', $scope.currentStateName);
             $scope.state = state;
             ls.set('state', $scope.state);
-            ls.set('isReadOnly', $scope.isReadOnly);
-            
+
             if(isReadOnly) {
-                ls.set('clearButtonText', 'OK');
+                $location.path('/state/view/' + state._id);
             } else {
-                ls.set('clearButtonText', 'Cancel');
-            }
-            
-            $location.path('/state/edit');
+                $location.path('/state/edit/' + state._id);
+            }         
         
         }
 
@@ -80,7 +123,7 @@ angular
                 
                     $scope.state = null;
                     ls.remove('state');
-                    ls.set('isReadOnly', $scope.isReadOnly);
+                
                     if(!(state == null || state == undefined)) {
                         if(!(state._id == undefined || state._id == '')) {
                             $scope.currentStateName = '';                         

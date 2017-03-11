@@ -6,10 +6,53 @@ angular
 
         //When controller is refreshed, get necessary data back from service
 
-        $scope.nature = ls.get('nature');
-        $scope.currentNatureName = ls.get('currentNatureName');
-        $scope.isReadOnly = ls.get('isReadOnly');
-        $scope.clearButtonText = ls.get('clearButtonText');
+        if($route.current.originalPath == '/nature/create') {
+            
+            $scope.nature = null;
+            ls.remove('nature');
+            $scope.currentNatureName == '';
+            ls.remove('currentNatureName');
+            $scope.clearButtonText = 'Clear';
+            $scope.isReadOnly = false;
+
+        } else if($route.current.originalPath == '/nature/edit/:id') {
+
+            $scope.nature = ls.get('nature');
+            $scope.currentNatureName = ls.get('currentNatureName');
+            $scope.isReadOnly = false;
+            $scope.clearButtonText = 'Cancel';
+
+            var id = $route.current.params.id;
+            natureService.getById(id).then(function(nature) {
+                if(nature[0] == undefined) {
+                    $location.path('/natures');
+                }
+            });
+
+        } else if($route.current.originalPath == '/nature/view/:id') {
+
+            $scope.nature = ls.get('nature');
+            $scope.currentNatureName = ls.get('currentNatureName');
+            $scope.isReadOnly = true;
+            $scope.clearButtonText = 'OK';
+
+            var id = $route.current.params.id;
+            natureService.getById(id).then(function(nature) {
+                if(nature[0] == undefined) {
+                    $location.path('/natures');
+                }
+            });
+
+        } else {
+
+            $scope.nature = null;
+            ls.remove('nature');
+            $scope.currentNatureName == '';
+            ls.remove('currentNatureName');
+            $scope.isReadOnly = false;
+            $scope.clearButtonText = '';
+
+        }
 
         var reload = function() {
             natureService.fetch()
@@ -21,20 +64,20 @@ angular
         reload();
 
         $scope.create = function() {
-            ls.remove('nature');
-            ls.set('isReadOnly', false);
-            ls.set('clearButtonText', 'Clear');
             $location.path('/nature/create');            
         }
 
         $scope.clear = function() {
+
             var nature = $scope.nature;
+            
             $scope.currentNatureName = "";
-            ls.remove('currentNatureName');
+            ls.remove('currentNatureName');            
             $scope.nature = null;
-            $scope.isReadOnly = false;
             ls.remove('nature');
-            ls.set('isReadOnly', false);
+
+            $scope.isReadOnly = false;
+
             if(!(nature == null || nature._id == undefined || nature._id == null)) {
                 $location.path('/natures');
             }
@@ -52,15 +95,12 @@ angular
             ls.set('currentNatureName', $scope.currentNatureName);
             $scope.nature = nature;
             ls.set('nature', $scope.nature);
-            ls.set('isReadOnly', $scope.isReadOnly);
             
             if(isReadOnly) {
-                ls.set('clearButtonText', 'OK');
+                $location.path('/nature/view/' + nature._id);
             } else {
-                ls.set('clearButtonText', 'Cancel');
-            }
-            
-            $location.path('/nature/edit');
+                $location.path('/nature/edit/' + nature._id);
+            }     
         
         }
 
@@ -76,7 +116,7 @@ angular
                 
                     $scope.nature = null;
                     ls.remove('nature');
-                    ls.set('isReadOnly', $scope.isReadOnly);
+
                     if(!(nature == null || nature == undefined)) {
                         if(!(nature._id == undefined || nature._id == '')) {
                             $scope.currentNatureName = "";                         

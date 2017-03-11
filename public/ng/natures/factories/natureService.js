@@ -1,7 +1,7 @@
 angular
     .module('natureApp')
     .factory('natureService', function($http) {
-        var factory = { fetch: fetch, save: save, remove: remove };
+        var factory = { fetch: fetch, getById: getById, save: save, remove: remove };
 
         return factory; 
 
@@ -12,6 +12,13 @@ angular
             return $http.get('/api/nature')
                         .then(function(response) {
                             return response.data;
+                        });
+        }
+
+        function getById(id) {
+            return $http.get('/api/nature/' + id)
+                        .then(function(nature) {
+                            return nature.data;
                         });
         }
 

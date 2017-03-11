@@ -8,8 +8,8 @@ router.get('/', function(req, res, next) {
 
     //retrieve all natures from Nature model
     Nature.getAllNatures(function(err, natures) {
-        if(err) { return console.error(err); }
-        else { res.json(natures); }
+        if(err) { return res.status(400).json(err); }
+        else { res.status(200).json(natures); }
     });
 
 });
@@ -21,8 +21,8 @@ router.get('/:id', function(req, res, next){
   Nature.getNatureById(natureId, function(err, nature) {
  
         if (err) {
-            return console.error(err);
-        } else { res.json(nature); }
+            return res.status(400).json(err);
+        } else { res.status(200).json(nature); }
 
   });
 
@@ -36,7 +36,7 @@ router.get('/:name/:currentNatureName', function(req, res, next){
   Nature.getNatureByName(natureName, function(err, nature) {
  
         if (err) {
-            return console.error(err);
+            return res.status(400).json(err);
         } else { 
             if(!(nature == undefined || nature.length < 1 || cs(natureName, currentNatureName, true, false))) { res.status(200).json(nature); }
             else { res.status(404).json(nature); }
@@ -53,7 +53,7 @@ router.post('/', function(req, res, next){
     Nature.find(function(err, natures) {
 
         if(err){
-            next(err);
+            res.status(400).json(err);
         }
 
         req.checkBody('name', 'Nature name is required.').notEmpty();
@@ -89,7 +89,7 @@ router.put('/:id', function(req, res, next) {
         Nature.find({_id: id}, function(err, originalNature) {
 
             if(err){
-                next(err);
+                res.status(400).json(err);
             }
 
             req.checkBody('name', 'Nature name is required.').notEmpty();

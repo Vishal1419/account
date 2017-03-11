@@ -1,7 +1,7 @@
 angular
     .module('groupApp')
     .factory('groupService', function($http) {
-        var factory = { fetch: fetch, save: save, remove: remove };
+        var factory = { fetch: fetch, getById: getById, save: save, remove: remove };
 
         return factory; 
 
@@ -12,6 +12,13 @@ angular
             return $http.get('/api/group')
                         .then(function(response) {
                             return response.data;
+                        });
+        }
+
+        function getById(id) {
+            return $http.get('/api/group/' + id)
+                        .then(function(group) {
+                            return group.data;
                         });
         }
 

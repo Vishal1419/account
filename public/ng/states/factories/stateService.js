@@ -1,7 +1,7 @@
 angular
     .module('stateApp')
     .factory('stateService', function($http) {
-        var factory = { fetch: fetch, fetchCountries: fetchCountries, save: save, remove: remove };
+        var factory = { fetch: fetch, fetchCountries: fetchCountries, getById: getById, save: save, remove: remove };
 
         return factory; 
 
@@ -19,6 +19,13 @@ angular
             return $http.get('/api/country')
                         .then(function(countries) {
                             return countries.data;
+                        });
+        }
+
+        function getById(id) {
+            return $http.get('/api/state/' + id)
+                        .then(function(state) {
+                            return state.data;
                         });
         }
 

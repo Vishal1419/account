@@ -6,11 +6,59 @@ angular
 
         //When controller is refreshed, get necessary data back from service
 
-        $scope.country = ls.get('country');
-        $scope.currentCountryName = ls.get('currentCountryName');
-        $scope.currentCountryCode = ls.get('currentCountryCode');
-        $scope.isReadOnly = ls.get('isReadOnly');
-        $scope.clearButtonText = ls.get('clearButtonText');
+        if($route.current.originalPath == '/country/create') {
+            
+            $scope.country = null;
+            ls.remove('country');
+            $scope.currentCountryName == '';
+            ls.remove('currentCountryName');
+            $scope.currentCountryCode == '';
+            ls.remove('currentCountryCode');
+            $scope.clearButtonText = 'Clear';
+            $scope.isReadOnly = false;
+
+        } else if($route.current.originalPath == '/country/edit/:id') {
+
+            $scope.country = ls.get('country');
+            $scope.currentCountryName = ls.get('currentCountryName');
+            $scope.currentCountryCode = ls.get('currentCountryCode');
+            $scope.isReadOnly = false;
+            $scope.clearButtonText = 'Cancel';
+
+            var id = $route.current.params.id;
+            countryService.getById(id).then(function(country) {
+                if(country[0] == undefined) {
+                    $location.path('/countries');
+                }
+            });
+
+        } else if($route.current.originalPath == '/country/view/:id') {
+
+            $scope.country = ls.get('country');
+            $scope.currentCountryName = ls.get('currentCountryName');
+            $scope.currentCountryCode = ls.get('currentCountryCode');
+            $scope.isReadOnly = true;
+            $scope.clearButtonText = 'OK';
+
+            var id = $route.current.params.id;
+            countryService.getById(id).then(function(country) {
+                if(country[0] == undefined) {
+                    $location.path('/countries');
+                }
+            });
+
+        } else {
+
+            $scope.country = null;
+            ls.remove('country');
+            $scope.currentCountryName == '';
+            ls.remove('currentCountryName');
+            $scope.currentCountryCode == '';
+            ls.remove('currentCountryCode');
+            $scope.isReadOnly = false;
+            $scope.clearButtonText = '';
+
+        }
 
         var reload = function() {
             countryService.fetch()
@@ -22,22 +70,22 @@ angular
         reload();
 
         $scope.create = function() {
-            ls.remove('country');
-            ls.set('isReadOnly', false);
-            ls.set('clearButtonText', 'Clear');
             $location.path('/country/create');            
         }
 
         $scope.clear = function() {
+
             var country = $scope.country;
+
             $scope.currentCountryName = "";
             $scope.currentCountryCode = "";
             ls.remove('currentCountryName');
             ls.remove('currentCountryCode');
             $scope.country = null;
-            $scope.isReadOnly = false;
             ls.remove('country');
-            ls.set('isReadOnly', $scope.isReadOnly);
+
+            $scope.isReadOnly = false;
+
             if(!(country == null || country._id == undefined || country._id == null)) {
                 $location.path('/countries');
             }
@@ -55,16 +103,12 @@ angular
             ls.set('currentCountryCode', $scope.currentCountryCode);
             $scope.country = country;
             ls.set('country', $scope.country);
-            ls.set('isReadOnly', $scope.isReadOnly);
             
             if(isReadOnly) {
-                ls.set('clearButtonText', 'OK');
+                $location.path('/country/view/' + country._id);
             } else {
-                ls.set('clearButtonText', 'Cancel');            
-            }
-            
-            $location.path('/country/edit');
-        
+                $location.path('/country/edit/' + country._id);
+            }  
         }
 
         $scope.submit = function(country) {
@@ -79,7 +123,7 @@ angular
                 
                     $scope.country = null;
                     ls.remove('country');
-                    ls.set('isReadOnly', $scope.isReadOnly);
+
                     if(!(country == null || country == undefined)) {
                         if(!(country._id == undefined || country._id == '')) {
                             $scope.currentCountryName = "";                         

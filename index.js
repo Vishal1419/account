@@ -90,6 +90,7 @@ app.use(express.static(__dirname + '/public'));
 app.use('/templates', express.static(__dirname + '/views/templates'));
 
 app.use('/auto-validate', express.static(__dirname + '/node_modules/angular-auto-validate/dist'));
+app.use('/local-storage', express.static(__dirname + '/node_modules/angular-local-storage/dist'));
 
 //Set View-engine
 app.set('views', __dirname + '/views');

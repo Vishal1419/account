@@ -1,13 +1,15 @@
 angular
     .module('groupApp')
-    .controller("groupController", function(Flash, $scope, $http, $location, groupService) {
+    .controller("groupController", function(Flash, $scope, $http, $location, groupService, localStorageService) {
+
+        var ls = localStorageService;
 
         //When controller is refreshed, get necessary data back from service
 
-        $scope.group = groupService.getGroup();
-        $scope.currentGroupName = groupService.getCurrentGroupName();
-        $scope.isReadOnly = groupService.getIsReadOnly();
-        $scope.clearButtonText = groupService.getClearButtonText();
+        $scope.group = ls.get('group');
+        $scope.currentGroupName = ls.get('currentGroupName');
+        $scope.isReadOnly = ls.get('isReadOnly');
+        $scope.clearButtonText = ls.get('clearButtonText');
 
         var reload = function() {
             groupService.fetch()
@@ -19,43 +21,44 @@ angular
         reload();
 
         $scope.create = function() {
-            // groupService.store(null, false);
-            groupService.changeClearButtonText("Clear");
+            ls.remove('group');
+            ls.set('isReadOnly', false);
+            ls.set('clearButtonText', 'Clear');
             $location.path('/group/create');            
         }
 
         $scope.clear = function() {
             var group = $scope.group;
             $scope.currentGroupName = '';
-            groupService.storeCurrentGroupName($scope.currentGroupName);
+            ls.remove('currentGroupName');
             $scope.group = null;
             $scope.isReadOnly = false;
-            groupService.store($scope.group, $scope.isReadOnly);
+            ls.remove('group');
+            ls.set('isReadOnly', $scope.isReadOnly);
             if(!(group == null || group._id == undefined || group._id == null)) {
-                $location.path('/group');
+                $location.path('/groups');
             }
         }
 
         $scope.listGroups = function() {
-            $location.path('/group');
+            $location.path('/groups');
         }
 
         $scope.editGroup = function(group, isReadOnly) {
-
-            //Save data to the service because controller will get refreshed while redirecting the page
                 
             $scope.currentGroupName = group.name;
-            groupService.storeCurrentGroupName($scope.currentGroupName);
+            ls.set('currentGroupName', $scope.currentGroupName);
             $scope.group = group;
-            groupService.store($scope.group, isReadOnly);
+            ls.set('group', $scope.group);
+            ls.set('isReadOnly', $scope.isReadOnly)
             
             if(isReadOnly) {
-                groupService.changeClearButtonText("OK");                            
+                ls.set('clearButtonText', 'OK');
             } else {
-                groupService.changeClearButtonText("Cancel");            
+                ls.set('clearButtonText', 'Cancel');
             }
             
-            $location.path('/group/create');
+            $location.path('/group/edit');
         
         }
 
@@ -70,12 +73,13 @@ angular
                     Flash.create('success', response.data.success.msg);
                 
                     $scope.group = null;
+                    ls.remove('group');
                     groupService.store($scope.group, $scope.isReadOnly);
                     if(!(group == null || group == undefined)) {
                         if(!(group._id == undefined || group._id == '')) {
                             $scope.currentGroupName = '';                         
-                            groupService.storeCurrentGroupName($scope.currentGroupName);
-                            $location.path('/group');
+                            ls.set('currentGroupName', $scope.currentGroupName);
+                            $location.path('/groups');
                         }
                     }
 

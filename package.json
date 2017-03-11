@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "angular-auto-validate": "^1.19.0",
+    "angular-local-storage": "^0.5.2",
     "body-parser": "^1.17.0",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.3",

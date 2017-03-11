@@ -1,13 +1,15 @@
 angular
     .module('stateApp')
-    .controller("stateController", function(Flash, $scope, $http, $location, stateService) {
+    .controller("stateController", function(Flash, $scope, $http, $location, stateService, localStorageService) {
+
+        var ls = localStorageService;
 
         //When controller is refreshed, get necessary data back from service
 
-        $scope.state = stateService.getState();
-        $scope.currentStateName = stateService.getCurrentStateName();
-        $scope.isReadOnly = stateService.getIsReadOnly();
-        $scope.clearButtonText = stateService.getClearButtonText();
+        $scope.state = ls.get('state');
+        $scope.currentStateName = ls.get('currentStateName');
+        $scope.isReadOnly = ls.get('isReadOnly');
+        $scope.clearButtonText = ls.get('clearButtonText');
 
         var reload = function() {
             stateService.fetch()
@@ -23,25 +25,27 @@ angular
         reload();
 
         $scope.create = function() {
-            // stateService.store(null, false);
-            stateService.changeClearButtonText("Clear");
+            ls.remove('state');
+            ls.set('isReadOnly', false);
+            ls.set('clearButtonText', 'Clear');
             $location.path('/state/create');            
         }
 
         $scope.clear = function() {
             var state = $scope.state;
             $scope.currentStateName = '';
-            stateService.storeCurrentStateName($scope.currentStateName);
+            ls.remove('currentStateName');
             $scope.state = null;
             $scope.isReadOnly = false;
-            stateService.store($scope.state, $scope.isReadOnly);
+            ls.remove('state');
+            ls.set('isReadOnly', $scope.isReadOnly);
             if(!(state == null || state._id == undefined || state._id == null)) {
-                $location.path('/state');
+                $location.path('/states');
             }
         }
 
         $scope.listStates = function() {
-            $location.path('/state');
+            $location.path('/states');
         }
 
         $scope.editState = function(state, isReadOnly) {
@@ -49,17 +53,18 @@ angular
             //Save data to the service because controller will get refreshed while redirecting the page
                 
             $scope.currentStateName = state.name;
-            stateService.storeCurrentStateName($scope.currentStateName);
+            ls.set('currentStateName', $scope.currentStateName);
             $scope.state = state;
-            stateService.store($scope.state, isReadOnly);
+            ls.set('state', $scope.state);
+            ls.set('isReadOnly', $scope.isReadOnly);
             
             if(isReadOnly) {
-                stateService.changeClearButtonText("OK");                            
+                ls.set('clearButtonText', 'OK');
             } else {
-                stateService.changeClearButtonText("Cancel");            
+                ls.set('clearButtonText', 'Cancel');
             }
             
-            $location.path('/state/create');
+            $location.path('/state/edit');
         
         }
 
@@ -74,12 +79,13 @@ angular
                     Flash.create('success', response.data.success.msg);
                 
                     $scope.state = null;
-                    stateService.store($scope.state, $scope.isReadOnly);
+                    ls.remove('state');
+                    ls.set('isReadOnly', $scope.isReadOnly);
                     if(!(state == null || state == undefined)) {
                         if(!(state._id == undefined || state._id == '')) {
                             $scope.currentStateName = '';                         
-                            stateService.storeCurrentStateName($scope.currentStateName);
-                            $location.path('/state');
+                            ls.remove('currentStateName');
+                            $location.path('/states');
                         }
                     }
 

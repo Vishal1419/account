@@ -1,13 +1,15 @@
 angular
     .module('natureApp')
-    .controller("natureController", function(Flash, $scope, $http, $location, natureService) {
+    .controller("natureController", function(Flash, $scope, $http, $location, natureService, localStorageService) {
+
+        var ls = localStorageService;
 
         //When controller is refreshed, get necessary data back from service
 
-        $scope.nature = natureService.getNature();
-        $scope.currentNatureName = natureService.getCurrentNatureName();
-        $scope.isReadOnly = natureService.getIsReadOnly();
-        $scope.clearButtonText = natureService.getClearButtonText();
+        $scope.nature = ls.get('nature');
+        $scope.currentNatureName = ls.get('currentNatureName');
+        $scope.isReadOnly = ls.get('isReadOnly');
+        $scope.clearButtonText = ls.get('clearButtonText');
 
         var reload = function() {
             natureService.fetch()
@@ -19,25 +21,27 @@ angular
         reload();
 
         $scope.create = function() {
-            // natureService.store(null, false);
-            natureService.changeClearButtonText("Clear");
+            ls.remove('nature');
+            ls.set('isReadOnly', false);
+            ls.set('clearButtonText', 'Clear');
             $location.path('/nature/create');            
         }
 
         $scope.clear = function() {
             var nature = $scope.nature;
             $scope.currentNatureName = "";
-            natureService.storeCurrentNatureName($scope.currentNatureName);
+            ls.remove('currentNatureName');
             $scope.nature = null;
             $scope.isReadOnly = false;
-            natureService.store($scope.nature, $scope.isReadOnly);
+            ls.remove('nature');
+            ls.set('isReadOnly', false);
             if(!(nature == null || nature._id == undefined || nature._id == null)) {
-                $location.path('/nature');
+                $location.path('/natures');
             }
         }
 
         $scope.listNatures = function() {
-            $location.path('/nature');
+            $location.path('/natures');
         }
 
         $scope.editNature = function(nature, isReadOnly) {
@@ -45,17 +49,18 @@ angular
             //Save data to the service because controller will get refreshed while redirecting the page
                 
             $scope.currentNatureName = nature.name;
-            natureService.storeCurrentNatureName($scope.currentNatureName);
+            ls.set('currentNatureName', $scope.currentNatureName);
             $scope.nature = nature;
-            natureService.store($scope.nature, isReadOnly);
+            ls.set('nature', $scope.nature);
+            ls.set('isReadOnly', $scope.isReadOnly);
             
             if(isReadOnly) {
-                natureService.changeClearButtonText("OK");                            
+                ls.set('clearButtonText', 'OK');
             } else {
-                natureService.changeClearButtonText("Cancel");            
+                ls.set('clearButtonText', 'Cancel');
             }
             
-            $location.path('/nature/create');
+            $location.path('/nature/edit');
         
         }
 
@@ -70,12 +75,13 @@ angular
                     Flash.create('success', response.data.success.msg);
                 
                     $scope.nature = null;
-                    natureService.store($scope.nature, $scope.isReadOnly);
+                    ls.remove('nature');
+                    ls.set('isReadOnly', $scope.isReadOnly);
                     if(!(nature == null || nature == undefined)) {
                         if(!(nature._id == undefined || nature._id == '')) {
                             $scope.currentNatureName = "";                         
-                            natureService.storeCurrentNatureName($scope.currentNatureName);
-                            $location.path('/nature');
+                            ls.remove('currentNatureName');
+                            $location.path('/natures');
                         }
                     }
 

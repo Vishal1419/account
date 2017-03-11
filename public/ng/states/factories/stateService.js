@@ -1,16 +1,7 @@
 angular
     .module('stateApp')
     .factory('stateService', function($http) {
-        var factory = { fetch: fetch, fetchCountries: fetchCountries, save: save, remove: remove, 
-                        store: store, getState: getState, getIsReadOnly: getIsReadOnly,
-                        changeClearButtonText: changeClearButtonText, getClearButtonText: getClearButtonText,
-                        storeCurrentStateName: storeCurrentStateName, getCurrentStateName: getCurrentStateName                      
-                     };
-
-        var savedState = {};
-        var isReadOnlyState = false;
-        var clearButtonTxt = "Clear";
-        var currState = '';
+        var factory = { fetch: fetch, fetchCountries: fetchCountries, save: save, remove: remove };
 
         return factory; 
 
@@ -63,43 +54,4 @@ angular
                  });
         }
 
-        //------------------------------------------------------------------
-
-        //These functions are used for saving temporary data 
-        //if controller is refreshed, then it can get data from this service
-        //-------------------------------------------------------------------
-
-        function store(state, isReadOnly) {  
-            savedState = state;
-            isReadOnlyState = isReadOnly
-        };
-
-        function getState() {
-            return savedState;
-        };
-
-        function getIsReadOnly() {
-            return isReadOnlyState;
-        };
-
-
-        function changeClearButtonText(clearButtonText) {
-            clearButtonTxt = clearButtonText;
-        };
-
-        function getClearButtonText() {
-            return clearButtonTxt;
-        };
-
-
-        function storeCurrentStateName(currentState) {
-            currState = currentState;
-        };
-
-        function getCurrentStateName() {
-            return currState;
-        };
-
-        //----------------------------------------------------------
     });
-

@@ -1,16 +1,7 @@
 angular
     .module('natureApp')
     .factory('natureService', function($http) {
-        var factory = { fetch: fetch, save: save, remove: remove, 
-                        store: store, getNature: getNature, getIsReadOnly: getIsReadOnly,
-                        changeClearButtonText: changeClearButtonText, getClearButtonText: getClearButtonText,
-                        storeCurrentNatureName: storeCurrentNatureName, getCurrentNatureName: getCurrentNatureName                        
-                     };
-
-        var savedNature = {};
-        var isReadOnlyNature = false;
-        var clearButtonTxt = "Clear";
-        var currNature = "";
+        var factory = { fetch: fetch, save: save, remove: remove };
 
         return factory; 
 
@@ -56,41 +47,4 @@ angular
                  });
         }
 
-        //------------------------------------------------------------------
-
-        //These functions are used for saving temporary data 
-        //if controller is refreshed, then it can get data from this service
-        //-------------------------------------------------------------------
-
-        function store(nature, isReadOnly) {  
-            savedNature = nature;
-            isReadOnlyNature = isReadOnly
-        };
-
-        function changeClearButtonText(clearButtonText) {
-            clearButtonTxt = clearButtonText;
-        };
-
-        function storeCurrentNatureName(currentNature) {
-            currNature = currentNature;
-        };
-
-        function getNature() {
-            return savedNature;
-        };
-
-        function getIsReadOnly() {
-            return isReadOnlyNature;
-        };
-
-        function getClearButtonText() {
-            return clearButtonTxt;
-        };
-
-        function getCurrentNatureName() {
-            return currNature;
-        };
-
-        //----------------------------------------------------------
     });
-

@@ -1,14 +1,16 @@
 angular
     .module('countryApp')
-    .controller("countryController", function(Flash, $scope, $http, $location, countryService) {
+    .controller("countryController", function(Flash, $scope, $http, $location, countryService, localStorageService) {
+
+        var ls = localStorageService;
 
         //When controller is refreshed, get necessary data back from service
 
-        $scope.country = countryService.getCountry();
-        $scope.currentCountryName = countryService.getCurrentCountryName();
-        $scope.currentCountryCode = countryService.getCurrentCountryCode();
-        $scope.isReadOnly = countryService.getIsReadOnly();
-        $scope.clearButtonText = countryService.getClearButtonText();
+        $scope.country = ls.get('country');
+        $scope.currentCountryName = ls.get('currentCountryName');
+        $scope.currentCountryCode = ls.get('currentCountryCode');
+        $scope.isReadOnly = ls.get('isReadOnly');
+        $scope.clearButtonText = ls.get('clearButtonText');
 
         var reload = function() {
             countryService.fetch()
@@ -20,8 +22,9 @@ angular
         reload();
 
         $scope.create = function() {
-            // countryService.store(null, false);
-            countryService.changeClearButtonText("Clear");
+            ls.remove('country');
+            ls.set('isReadOnly', false);
+            ls.set('clearButtonText', 'Clear');
             $location.path('/country/create');            
         }
 
@@ -29,36 +32,38 @@ angular
             var country = $scope.country;
             $scope.currentCountryName = "";
             $scope.currentCountryCode = "";
-            countryService.storeCurrentCountry($scope.currentCountryName, $scope.currentCountryCode);
+            ls.remove('currentCountryName');
+            ls.remove('currentCountryCode');
             $scope.country = null;
             $scope.isReadOnly = false;
-            countryService.store($scope.country, $scope.isReadOnly);
+            ls.remove('country');
+            ls.set('isReadOnly', $scope.isReadOnly);
             if(!(country == null || country._id == undefined || country._id == null)) {
-                $location.path('/country');
+                $location.path('/countries');
             }
         }
 
         $scope.listCountries = function() {
-            $location.path('/country');
+            $location.path('/countries');
         }
 
         $scope.editCountry = function(country, isReadOnly) {
 
-            //Save data to the service because controller will get refreshed while redirecting the page
-                
             $scope.currentCountryName = country.name;
             $scope.currentCountryCode = country.code;
-            countryService.storeCurrentCountry($scope.currentCountryName, $scope.currentCountryCode);
+            ls.set('currentCountryName', $scope.currentCountryName);
+            ls.set('currentCountryCode', $scope.currentCountryCode);
             $scope.country = country;
-            countryService.store($scope.country, isReadOnly);
+            ls.set('country', $scope.country);
+            ls.set('isReadOnly', $scope.isReadOnly);
             
             if(isReadOnly) {
-                countryService.changeClearButtonText("OK");                            
+                ls.set('clearButtonText', 'OK');
             } else {
-                countryService.changeClearButtonText("Cancel");            
+                ls.set('clearButtonText', 'Cancel');            
             }
             
-            $location.path('/country/create');
+            $location.path('/country/edit');
         
         }
 
@@ -73,13 +78,15 @@ angular
                     Flash.create('success', response.data.success.msg);
                 
                     $scope.country = null;
-                    countryService.store($scope.country, $scope.isReadOnly);
+                    ls.remove('country');
+                    ls.set('isReadOnly', $scope.isReadOnly);
                     if(!(country == null || country == undefined)) {
                         if(!(country._id == undefined || country._id == '')) {
                             $scope.currentCountryName = "";                         
                             $scope.currentCountryCode = "";                         
-                            countryService.storeCurrentCountry($scope.currentCountryName, $scope.currentCountryCode);
-                            $location.path('/country');
+                            ls.remove('currentCountryName');
+                            ls.remove('currentCountryCode');
+                            $location.path('/countries');
                         }
                     }
 

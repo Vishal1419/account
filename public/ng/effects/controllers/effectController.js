@@ -1,13 +1,15 @@
 angular
     .module('effectApp')
-    .controller("effectController", function(Flash, $scope, $http, $location, effectService) {
+    .controller("effectController", function(Flash, $scope, $http, $location, effectService, localStorageService) {
+
+        var ls = localStorageService;
 
         //When controller is refreshed, get necessary data back from service
 
-        $scope.effect = effectService.getEffect();
-        $scope.currentEffectName = effectService.getCurrentEffectName();
-        $scope.isReadOnly = effectService.getIsReadOnly();
-        $scope.clearButtonText = effectService.getClearButtonText();
+        $scope.effect = ls.get('effect');
+        $scope.currentEffectName = ls.get('currentEffectName');
+        $scope.isReadOnly = ls.get('isReadOnly');
+        $scope.clearButtonText = ls.get('clearButtonText');
 
         var reload = function() {
             effectService.fetch()
@@ -19,43 +21,44 @@ angular
         reload();
 
         $scope.create = function() {
-            // effectService.store(null, false);
-            effectService.changeClearButtonText("Clear");
+            ls.remove('effect');
+            ls.set('isReadOnly', false);
+            ls.set('clearButtonText', 'Clear');
             $location.path('/effect/create');            
         }
 
         $scope.clear = function() {
             var effect = $scope.effect;
             $scope.currentEffectName = "";
-            effectService.storeCurrentEffectName($scope.currentEffectName);
+            ls.remove('currentEffectName');
             $scope.effect = null;
+            ls.remove('effect');
             $scope.isReadOnly = false;
-            effectService.store($scope.effect, $scope.isReadOnly);
+            ls.set('isReadOnly', $scope.isReadOnly);
             if(!(effect == null || effect._id == undefined || effect._id == null)) {
-                $location.path('/effect');
+                $location.path('/effects');
             }
         }
 
         $scope.listEffects = function() {
-            $location.path('/effect');
+            $location.path('/effects');
         }
 
         $scope.editEffect = function(effect, isReadOnly) {
 
-            //Save data to the service because controller will get refreshed while redirecting the page
-                
             $scope.currentEffectName = effect.name;
-            effectService.storeCurrentEffectName($scope.currentEffectName);
+            ls.set('currentEffectName', $scope.currentEffectName);
             $scope.effect = effect;
-            effectService.store($scope.effect, isReadOnly);
+            ls.set('effect', $scope.effect);
+            ls.set('isReadOnly', isReadOnly);
             
             if(isReadOnly) {
-                effectService.changeClearButtonText("OK");                            
+                ls.set('clearButtonText', 'OK');
             } else {
-                effectService.changeClearButtonText("Cancel");            
+                ls.set('clearButtonText', 'Cancel');
             }
             
-            $location.path('/effect/create');
+            $location.path('/effect/edit');
         
         }
 
@@ -70,12 +73,13 @@ angular
                     Flash.create('success', response.data.success.msg);
                 
                     $scope.effect = null;
-                    effectService.store($scope.effect, $scope.isReadOnly);
+                    ls.remove('effect');
+                    ls.set('isReadOnly', $scope.isReadOnly);
                     if(!(effect == null || effect == undefined)) {
                         if(!(effect._id == undefined || effect._id == '')) {
                             $scope.currentEffectName = "";                         
-                            effectService.storeCurrentEffectName($scope.currentEffectName);
-                            $location.path('/effect');
+                            ls.remove('currentEffectName');
+                            $location.path('/effects');
                         }
                     }
 

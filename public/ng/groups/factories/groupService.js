@@ -1,16 +1,7 @@
 angular
     .module('groupApp')
     .factory('groupService', function($http) {
-        var factory = { fetch: fetch, save: save, remove: remove, 
-                        store: store, getGroup: getGroup, getIsReadOnly: getIsReadOnly,
-                        changeClearButtonText: changeClearButtonText, getClearButtonText: getClearButtonText,
-                        storeCurrentGroupName: storeCurrentGroupName, getCurrentGroupName: getCurrentGroupName                      
-                     };
-
-        var savedGroup = {};
-        var isReadOnlyGroup = false;
-        var clearButtonTxt = "Clear";
-        var currGroup = '';
+        var factory = { fetch: fetch, save: save, remove: remove };
 
         return factory; 
 
@@ -56,43 +47,5 @@ angular
                  });
         }
 
-        //------------------------------------------------------------------
-
-        //These functions are used for saving temporary data 
-        //if controller is refreshed, then it can get data from this service
-        //-------------------------------------------------------------------
-
-        function store(group, isReadOnly) {  
-            savedGroup = group;
-            isReadOnlyGroup = isReadOnly
-        };
-
-        function getGroup() {
-            return savedGroup;
-        };
-
-        function getIsReadOnly() {
-            return isReadOnlyGroup;
-        };
-
-
-        function changeClearButtonText(clearButtonText) {
-            clearButtonTxt = clearButtonText;
-        };
-
-        function getClearButtonText() {
-            return clearButtonTxt;
-        };
-
-
-        function storeCurrentGroupName(currentGroup) {
-            currGroup = currentGroup;
-        };
-
-        function getCurrentGroupName() {
-            return currGroup;
-        };
-
-        //----------------------------------------------------------
     });
 

@@ -81,6 +81,13 @@ app.use(expressValidator({
                 }
             }, this);
             return recordFound;
+        },
+        checkEquality: function(firstInput, secondInput, equality) {
+            if(equality) {
+                return cs(firstInput, secondInput, true, false);
+            } else {
+                return !cs(firstInput, secondInput, true, false);
+            }
         }
     }
 }));

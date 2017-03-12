@@ -50,7 +50,7 @@ router.get('/:name/:currentStateName', function(req, res, next){
 router.post('/', function(req, res){
 
     var name = req.body.name;
-    var country = (req.body.country == null || req.body.country == undefined) ? '' : req.body.country.name;
+    var country = req.body.country;
 
     Country.getAllCountries(function(err, countries) {
 
@@ -62,8 +62,17 @@ router.post('/', function(req, res){
 
             req.checkBody('name', 'State name is required.').notEmpty();
             req.checkBody('name', 'Duplicate state Name.').duplicateRecord('name', states);
-            req.checkBody('country.name', 'Country name is required.').notEmpty();
-            req.checkBody('country.name', 'Please select country from list.').noRecordFound('name', countries);
+
+            if(country.name == undefined) {
+                req.checkBody('country', 'Country name is required.').notEmpty();
+                req.checkBody('country', 'Country Name and state name should be different.').checkEquality(name, false);
+                req.checkBody('country', 'Please select country from list.').noRecordFound('name', countries);
+            } else {
+                req.checkBody('country.name', 'Country name is required.').notEmpty();
+                req.checkBody('parent.name', 'Parent Name and group name should be different.').checkEquality(name, false);
+                req.checkBody('country.name', 'Please select country from list.').noRecordFound('name', countries);
+                country = country.name;
+            }
 
             //Check for errors
             var errors = req.validationErrors();
@@ -101,7 +110,7 @@ router.put('/:id', function(req, res, next) {
 
     var id = req.params.id;
     var name = req.body.name;
-    var country = (req.body.country == null || req.body.country == undefined) ? '' : req.body.country.name;
+    var country = req.body.country;
     var isSystemState = req.body.isSystemState;
 
     Country.getAllCountries(function(err, countries) {
@@ -116,8 +125,17 @@ router.put('/:id', function(req, res, next) {
 
                 req.checkBody('name', 'State name is required.').notEmpty();
                 req.checkBody('name', 'Duplicate state Name.').duplicateRecordExcludingCurrentRecord('name', states, originalState[0].name);
-                req.checkBody('country.name', 'Country name is required.').notEmpty();
-                req.checkBody('country.name', 'Please select country from list.').noRecordFound('name', countries);
+
+                if(country.name == undefined) {
+                    req.checkBody('country', 'Country name is required.').notEmpty();
+                    req.checkBody('country', 'Country Name and state name should be different.').checkEquality(name, false);
+                    req.checkBody('country', 'Please select country from list.').noRecordFound('name', countries);
+                } else {
+                    req.checkBody('country.name', 'Country name is required.').notEmpty();
+                    req.checkBody('parent.name', 'Parent Name and group name should be different.').checkEquality(name, false);
+                    req.checkBody('country.name', 'Please select country from list.').noRecordFound('name', countries);
+                    country = country.name;
+                }
 
                 //Check for errors
                 var errors = req.validationErrors();

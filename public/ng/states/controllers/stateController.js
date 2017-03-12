@@ -24,7 +24,6 @@ angular
 
             var id = $route.current.params.id;
             stateService.getById(id).then(function(state) {
-                console.log(state);
                 if(state[0] == undefined) {
                     $location.path('/states');
                 }
@@ -39,7 +38,6 @@ angular
 
             var id = $route.current.params.id;
             stateService.getById(id).then(function(state) {
-                console.log(state);
                 if(state[0] == undefined) {
                     $location.path('/states');
                 }

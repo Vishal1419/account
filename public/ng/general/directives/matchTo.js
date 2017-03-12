@@ -16,13 +16,11 @@ angular
                         attributes.unequal = false;
                     }
 
-                    console.log(modelValue);
-                    console.log(attributes.matchString);
-                    console.log(attributes.unequal);
-
                     if(attributes.unequal) {
                         if(modelValue == undefined || attributes.matchString == undefined || attributes.matchString == null) {
                             return true;
+                        } else if(!(typeof modelValue === String || typeof modelValue === 'string')) {
+                            return modelValue.name.toLowerCase() != attributes.matchString.toLowerCase();
                         } else {
                             return modelValue.toLowerCase() != attributes.matchString.toLowerCase();
                         }
@@ -40,7 +38,6 @@ angular
                     return matchTo(scope).matchString;
                 }, function (value) {
                     ctrl.$validate();
-                    console.log(value);
                 });
             }
         }

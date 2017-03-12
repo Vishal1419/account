@@ -52,7 +52,7 @@ router.post('/', function(req, res){
 
     var name = req.body.name;
     var alias = req.body.alias;
-    var parent = (req.body.parent == null || req.body.parent == undefined) ? '' : req.body.parent.name;
+    var parent = req.body.parent;
 
     Group.getAllGroups(function(err, groups) {
   
@@ -62,8 +62,17 @@ router.post('/', function(req, res){
 
         req.checkBody('name', 'Group name is required.').notEmpty();
         req.checkBody('name', 'Duplicate group Name.').duplicateRecord('name', groups);
-        req.checkBody('parent.name', 'Parent name is required.').notEmpty();
-        req.checkBody('parent.name', 'Please select parent group from list.').noRecordFound('name', groups);
+
+        if(parent.name == undefined) {
+            req.checkBody('parent', 'Parent name is required.').notEmpty();
+            req.checkBody('parent', 'Parent Name and group name should be different.').checkEquality(name, false);
+            req.checkBody('parent', 'Please select parent group from list.').noRecordFound('name', groups);            
+        } else {
+            req.checkBody('parent.name', 'Parent name is required.').notEmpty();
+            req.checkBody('parent.name', 'Parent Name and group name should be different.').checkEquality(name, false);
+            req.checkBody('parent.name', 'Please select parent group from list.').noRecordFound('name', groups);
+            parent = parent.name;
+        }
 
         //Check for errors
         var errors = req.validationErrors();
@@ -109,10 +118,10 @@ router.put('/:id', function(req, res, next) {
     var id = req.params.id;
     var name = req.body.name;
     var alias = req.body.alias;
-    var parent = (req.body.parent == null || req.body.parent == undefined) ? '' : req.body.parent.name;
+    var parent = req.body.parent;
     var isSystemGroup = req.body.isSystemGroup;
 
-    console.log(parent);
+    //Here parent is actually parent.name
 
     Group.getAllGroups(function(err, groups) {
 
@@ -124,8 +133,17 @@ router.put('/:id', function(req, res, next) {
 
             req.checkBody('name', 'Group name is required.').notEmpty();
             req.checkBody('name', 'Duplicate group Name.').duplicateRecordExcludingCurrentRecord('name', groups, originalGroup[0].name);
-            req.checkBody('parent.name', 'Parent name is required.').notEmpty();
-            req.checkBody('parent.name', 'Please select parent group from list.').noRecordFound('name', groups);
+
+            if(parent.name == undefined) {
+                req.checkBody('parent', 'Parent name is required.').notEmpty();
+                req.checkBody('parent', 'Parent Name and group name should be different.').checkEquality(name, false);
+                req.checkBody('parent', 'Please select parent group from list.').noRecordFound('name', groups);            
+            } else {
+                req.checkBody('parent.name', 'Parent name is required.').notEmpty();
+                req.checkBody('parent.name', 'Parent Name and group name should be different.').checkEquality(name, false);
+                req.checkBody('parent.name', 'Please select parent group from list.').noRecordFound('name', groups);
+                parent = parent.name;
+            }
 
             //Check for errors
             var errors = req.validationErrors();

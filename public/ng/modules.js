@@ -57,6 +57,7 @@ angular.module('stateApp', ['ngRoute', 'jcs-autoValidate', 'ngFlash', 'LocalStor
                 errorMessages['requiredState'] = "State name is required";
                 errorMessages['noCountryFound'] = "Choose country from list";
                 errorMessages['requiredCountry'] = "Country name is required";
+                errorMessages['unMatchStateAndCountry'] = "State name and Country name should be different";
            });
        })
        .config(function (localStorageServiceProvider) {

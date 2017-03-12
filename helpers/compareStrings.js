@@ -5,8 +5,8 @@ function compareStrings (string1, string2, ignoreCase, useLocale) {
             string2 = string2.toLocaleLowerCase();
         }
         else {
-            string1 = string1.toLowerCase();
-            string2 = string2.toLowerCase();
+            string1 = string1 === undefined ? '' : string1.toLowerCase();
+            string2 = string2 === undefined ? '' : string2.toLowerCase();
         }
     }
 

@@ -26,8 +26,10 @@
                             typeahead-template-url="country-template.html"
                             required
                             unique-record="{ url: '/api/country', reverse: true }"
+                            match-to="{ matchString: state.name, unequal: true}"
                             ng-required-err-type="requiredCountry"
-                            ng-uniqueRecord-err-type="noCountryFound" />
+                            ng-uniqueRecord-err-type="noCountryFound" 
+                            ng-matchTo-err-type="unMatchStateAndCountry" />
                 </div>
                 <div class="row">
                     <div class="form-group form-controls">

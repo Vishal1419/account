@@ -24,7 +24,6 @@ angular
 
             var id = $route.current.params.id;
             groupService.getById(id).then(function(group) {
-                console.log(group);
                 if(group[0] == undefined) {
                     $location.path('/groups');
                 }
@@ -39,7 +38,6 @@ angular
 
             var id = $route.current.params.id;
             groupService.getById(id).then(function(group) {
-                console.log(group);
                 if(group[0] == undefined) {
                     $location.path('/groups');
                 }

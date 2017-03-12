@@ -79,6 +79,7 @@ router.post('/', function(req, res, next){
         req.checkBody('name', 'Duplicate country name.').duplicateRecord('name', countries);
         req.checkBody('code', 'Country code is required.').notEmpty();
         req.checkBody('code', 'Duplicate country code.').duplicateRecord('code', countries);
+        req.checkBody('name', 'Country Name and Country Code should be different.').checkEquality(code, false);
         var errors = req.validationErrors();
 
         if(errors) {
@@ -121,6 +122,7 @@ router.put('/:id', function(req, res, next) {
             req.checkBody('name', 'Duplicate country name.').duplicateRecordExcludingCurrentRecord('name', countries, originalCountry[0].name);
             req.checkBody('code', 'Country code is required.').notEmpty();
             req.checkBody('code', 'Duplicate country code.').duplicateRecordExcludingCurrentRecord('code', countries, originalCountry[0].code);
+            req.checkBody('name', 'Country Name and Country Code should be different.').checkEquality(code, false);
             var errors = req.validationErrors();
 
             if(errors) {

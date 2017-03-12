@@ -79,6 +79,7 @@ router.post('/', function(req, res, next){
         req.checkBody('name', 'Duplicate creditDebit name.').duplicateRecord('name', creditDebits);
         req.checkBody('code', 'CreditDebit code is required.').notEmpty();
         req.checkBody('code', 'Duplicate creditDebit code.').duplicateRecord('code', creditDebits);
+        req.checkBody('name', 'CreditDebit Name and CreditDebit Code should be different.').checkEquality(code, false);
         var errors = req.validationErrors();
 
         if(errors) {
@@ -121,6 +122,7 @@ router.put('/:id', function(req, res, next) {
             req.checkBody('name', 'Duplicate creditDebit name.').duplicateRecordExcludingCurrentRecord('name', creditDebits, originalCreditDebit[0].name);
             req.checkBody('code', 'CreditDebit code is required.').notEmpty();
             req.checkBody('code', 'Duplicate creditDebit code.').duplicateRecordExcludingCurrentRecord('code', creditDebits, originalCreditDebit[0].code);
+            req.checkBody('name', 'CreditDebit Name and CreditDebit Code should be different.').checkEquality(code, false);
             var errors = req.validationErrors();
 
             if(errors) {

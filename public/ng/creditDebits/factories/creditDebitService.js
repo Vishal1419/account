@@ -1,6 +1,6 @@
 angular
-    .module('countryApp')
-    .factory('countryService', function($http) {
+    .module('creditDebitApp')
+    .factory('creditDebitService', function($http) {
         var factory = { fetch: fetch, getById: getById, save: save, remove: remove };
 
         return factory; 
@@ -9,22 +9,22 @@ angular
         //---------------------------------------------------------------
 
         function fetch() {
-            return $http.get('/api/country')
+            return $http.get('/api/creditDebit')
                         .then(function(response) {
                             return response.data;
                         });
         }
 
         function getById(id) {
-            return $http.get('/api/country/' + id)
-                        .then(function(country) {
-                            return country.data;
+            return $http.get('/api/creditDebit/' + id)
+                        .then(function(creditDebit) {
+                            return creditDebit.data;
                         });
         }
 
-        function save(country, callback) {
-            if(country == undefined || country._id == undefined || country._id == '') {
-                $http.post('/api/country', country)
+        function save(creditDebit, callback) {
+            if(creditDebit == undefined || creditDebit._id == undefined || creditDebit._id == '') {
+                $http.post('/api/creditDebit', creditDebit)
                      .then(function (response) {
                          //Clear errors
                          callback(response);
@@ -33,7 +33,7 @@ angular
                          callback(response);
                      });
             } else {
-                $http.put('/api/country/' + country._id, country).then(function (response) {
+                $http.put('/api/creditDebit/' + creditDebit._id, creditDebit).then(function (response) {
                          //Clear errors
                          callback(response);
                      }, function(response) {
@@ -43,8 +43,8 @@ angular
             }
         }
 
-        function remove(country, callback) {
-            $http.delete('/api/country/' + country._id + '/' + encodeURL(country.name), country)
+        function remove(creditDebit, callback) {
+            $http.delete('/api/creditDebit/' + creditDebit._id + '/' + encodeURL(creditDebit.name), creditDebit)
                  .then(function (response) {
                      //Clear errors
                      callback(response);

@@ -1,0 +1,38 @@
+<div class="col-md-4 col-md-offset-4">
+    <div ng-controller="creditDebitController">
+        <flash-message></flash-message>        
+        <div class="row">
+            <div class="col-md-1">
+                <button type="button" class="btn btn-primary btn-list btn-list-fix" ng-click="listCreditDebits()"></button>
+            </div>
+        </div>
+        <div class="row">
+            <form name="creditDebitForm" ng-submit="submit(creditDebit)" novalidate>
+                <div class="form-group">
+                    <label for="name" class="control-label">Name</label>
+                    <input type="text" id="name" name="name" class="form-control form-input" ng-model="creditDebit.name"
+                            ng-disabled="isReadOnly" autocomplete="off"
+                            required 
+                            unique-record="{ url: '/api/creditDebit', currentRecordName: currentCreditDebitName }"
+                            ng-required-err-type="requiredCreditDebit"
+                            ng-uniqueRecord-err-type="uniqueCreditDebit" />
+                </div>
+                <div class="form-group">
+                    <label for="code" class="control-label">Code</label>
+                    <input type="text" id="code" name="code" class="form-control form-input" ng-model="creditDebit.code"
+                            ng-disabled="isReadOnly" autocomplete="off"
+                            required 
+                            unique-record="{ url: '/api/creditDebit', optionalPart: '/code', currentRecordName: currentCreditDebitCode }"
+                            ng-required-err-type="requiredCreditDebitCode"
+                            ng-uniqueRecord-err-type="uniqueCreditDebitCode" />
+                </div>
+                <div class="row">
+                    <div class="form-group form-controls">
+                        <button id="submit" type="submit" class="btn btn-success btn-input submit" ng-hide="isReadOnly">Save</button>
+                        <button id="clear" type="reset" class="btn btn-input clear" ng-class="isReadOnly ? 'btn-primary' : 'btn-danger'" ng-click="clear()" ng-init="Clear">{{clearButtonText}}</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

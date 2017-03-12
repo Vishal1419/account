@@ -4,7 +4,8 @@ var Schema = mongoose.Schema;
 var encodeURL = require("../../../helpers/encodeURL");
 
 var effectSchema = new Schema({
-    name: {type: String, required: true}
+    name: {type: String, required: true},
+	isSystemEffect: {type: Boolean}
 });
 
 var Effect = module.exports = mongoose.model('Effect', effectSchema);
@@ -38,7 +39,8 @@ module.exports.createEffect = function(newEffect, callback){
 module.exports.updateEffect = function(updatedValuesOfExistingEffect, callback){
   	Effect.update(
     	{"_id": updatedValuesOfExistingEffect.id},
-    	{"$set": {"name": updatedValuesOfExistingEffect.name}},
+    	{"$set": {"name": updatedValuesOfExistingEffect.name, 
+				  "isSystemEffect": updatedValuesOfExistingEffect.isSystemEffect}},
     	{multi: false},
    		callback
   	);

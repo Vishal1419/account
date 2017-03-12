@@ -25,14 +25,15 @@
                 <tr ng-repeat="nature in natures | orderBy : sortColumn : reverseSort | filter : searchText">
                     <td> {{nature.name}} </td>
                     <td class="col-actions">
-                        <button type="button" class="btn btn-info btn-edit" ng-click="editNature(nature, false)"></button>
+                        <button type="button" class="btn btn-info btn-edit" ng-click="editNature(nature, false)" ng-disabled="nature.isSystemNature"></button>
                     </td>
                     <td class="col-actions">
                         <button type="button" class="btn btn-info btn-show" ng-click="editNature(nature, true)"></button>
                     </td>
                     <td class="col-actions">
                         <button type="button" class="btn btn-danger btn-delete" 
-                                mw-confirm-click="deleteNature(nature)" mw-confirm-click-message="Delete this nature?"></button>
+                                mw-confirm-click="deleteNature(nature)" mw-confirm-click-message="Delete this nature?"
+                                ng-disabled="nature.isSystemNature"></button>
                     </td>
                     <td class="col-actions">
                         <button type="button" class="btn btn-success btn-print"></button>

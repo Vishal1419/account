@@ -1,5 +1,5 @@
 <div class="col-md-10 col-md-offset-1">
-    <div ng-controller="countryController">
+    <div ng-controller="creditDebitController">
         <flash-message></flash-message>        
         <div class="row">
             <div class="col-md-8 pull-bottom">
@@ -13,10 +13,10 @@
             <thead>
                 <tr>
                     <th ng-click="sortData('name')">
-                        Country Name <div ng-class="getSortClass('name')"></div>
+                        CreditDebit Name <div ng-class="getSortClass('name')"></div>
                     </th>
                     <th ng-click="sortData('code')">
-                        Country Code <div ng-class="getSortClass('code')"></div>
+                        CreditDebit Code <div ng-class="getSortClass('code')"></div>
                     </th>
                     <th class="col-actions">Edit</th>
                     <th class="col-actions">Show</th>
@@ -25,20 +25,20 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="country in countries | orderBy : sortColumn : reverseSort | filter : searchItem">
-                    <td> {{country.name}} </td>
-                    <td> {{country.code}} </td>
+                <tr ng-repeat="creditDebit in creditDebits | orderBy : sortColumn : reverseSort | filter : searchItem">
+                    <td> {{creditDebit.name}} </td>
+                    <td> {{creditDebit.code}} </td>
                     <td class="col-actions">
-                        <button type="button" class="btn btn-info btn-edit" ng-click="editCountry(country, false)" ng-disabled="country.isSystemCountry"></button>
+                        <button type="button" class="btn btn-info btn-edit" ng-click="editCreditDebit(creditDebit, false)" ng-disabled="creditDebit.isSystemCreditDebit"></button>
                     </td>
                     <td class="col-actions">
-                        <button type="button" class="btn btn-info btn-show" ng-click="editCountry(country, true)"></button>
+                        <button type="button" class="btn btn-info btn-show" ng-click="editCreditDebit(creditDebit, true)"></button>
                     </td>
                     <td class="col-actions">
                         <button type="button" class="btn btn-danger btn-delete" 
-                                mw-confirm-click="deleteCountry(country)"
-                                mw-confirm-click-message="Delete this country?"
-                                ng-disabled="country.isSystemCountry"></button>
+                                mw-confirm-click="deleteCreditDebit(creditDebit)" 
+                                mw-confirm-click-message="Delete this creditDebit?"
+                                ng-disabled="creditDebit.isSystemCreditDebit"></button>
                     </td>
                     <td class="col-actions">
                         <button type="button" class="btn btn-success btn-print"></button>

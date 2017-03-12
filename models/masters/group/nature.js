@@ -4,7 +4,8 @@ var Schema = mongoose.Schema;
 var encodeURL = require("../../../helpers/encodeURL");
 
 var natureSchema = new Schema({
-    name: {type: String, required: true}
+    name: {type: String, required: true},
+	isSystemNature: {type: Boolean}
 });
 
 var Nature = module.exports = mongoose.model('Nature', natureSchema);
@@ -38,7 +39,8 @@ module.exports.createNature = function(newNature, callback){
 module.exports.updateNature = function(updatedValuesOfExistingNature, callback){
   	Nature.update(
     	{"_id": updatedValuesOfExistingNature.id},
-    	{"$set": {"name": updatedValuesOfExistingNature.name}},
+    	{"$set": {"name": updatedValuesOfExistingNature.name, 
+				  "isSystemNature": updatedValuesOfExistingNature.isSystemNature}},
     	{multi: false},
    		callback
   	);

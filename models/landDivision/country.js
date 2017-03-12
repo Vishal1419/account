@@ -5,7 +5,8 @@ var encodeURL = require("../../helpers/encodeURL");
 
 var countrySchema = new Schema({
     name: {type: String, required: true},
-	code: {type: String, required: true}
+	code: {type: String, required: true},
+	isSystemCountry: {type: Boolean}
 });
 
 var Country = module.exports = mongoose.model('Country', countrySchema);
@@ -47,7 +48,8 @@ module.exports.createCountry = function(newCountry, callback){
 module.exports.updateCountry = function(updatedValuesOfExistingCountry, callback){
   	Country.update(
     	{"_id": updatedValuesOfExistingCountry.id},
-    	{"$set": {"name": updatedValuesOfExistingCountry.name, "code": updatedValuesOfExistingCountry.code}},
+    	{"$set": {"name": updatedValuesOfExistingCountry.name, "code": updatedValuesOfExistingCountry.code,
+				  "isSystemCountry": updatedValuesOfExistingCountry.isSystemCountry}},
     	{multi: false},
    		callback
   	);

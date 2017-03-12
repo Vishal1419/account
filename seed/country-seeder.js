@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 mongoose.connect('localhost:27017/accountdb');
 
 var countries = [
-    new Country({name: "India", code: "IN"})
+    new Country({name: "India", code: "IN", isSystemCountry: true})
 ];
 
 var done = 0;

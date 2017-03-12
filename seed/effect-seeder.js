@@ -5,13 +5,16 @@ mongoose.connect('localhost:27017/accountdb');
 
 var effects = [
     new Effect({
-        name: 'Balance Sheet'
+        name: 'Balance Sheet',
+        isSystemEffect: true
     }),
     new Effect({
-        name: 'Profit & Loss A/c'
+        name: 'Profit & Loss A/c',
+        isSystemEffect: true
     }),
     new Effect({
-        name: 'Trading Account'
+        name: 'Trading Account',
+        isSystemEffect: true
     })
 ];
 

@@ -25,14 +25,16 @@
                 <tr ng-repeat="effect in effects | orderBy : sortColumn : reverseSort | filter : searchText">
                     <td> {{effect.name}} </td>
                     <td class="col-actions">
-                        <button type="button" class="btn btn-info btn-edit" ng-click="editEffect(effect, false)"></button>
+                        <button type="button" class="btn btn-info btn-edit" ng-click="editEffect(effect, false)" ng-disabled="effect.isSystemEffect"></button>
                     </td>
                     <td class="col-actions">
                         <button type="button" class="btn btn-info btn-show" ng-click="editEffect(effect, true)"></button>
                     </td>
                     <td class="col-actions">
                         <button type="button" class="btn btn-danger btn-delete" 
-                                mw-confirm-click="deleteEffect(effect)" mw-confirm-click-message="Delete this effect?"></button>
+                                mw-confirm-click="deleteEffect(effect)" 
+                                mw-confirm-click-message="Delete this effect?"
+                                ng-disabled="effect.isSystemEffect"></button>
                     </td>
                     <td class="col-actions">
                         <button type="button" class="btn btn-success btn-print"></button>

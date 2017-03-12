@@ -1,8 +1,8 @@
 var express = require('express')
 var router = express.Router();
 
-var Country = require('../../models/landDivision/Country');
-var State = require('../../models/landDivision/State');
+var Country = require('../../models/landDivision/country');
+var State = require('../../models/landDivision/state');
 
 var cs = require('../../helpers/compareStrings');
 
@@ -102,6 +102,7 @@ router.put('/:id', function(req, res, next) {
     var id = req.params.id;
     var name = req.body.name;
     var country = (req.body.country == null || req.body.country == undefined) ? '' : req.body.country.name;
+    var isSystemState = req.body.isSystemState;
 
     Country.getAllCountries(function(err, countries) {
 
@@ -131,7 +132,7 @@ router.put('/:id', function(req, res, next) {
                             _id: id,
                             name: name,
                             country: parentCountry[0],
-                            isSystemState: false
+                            isSystemState: isSystemState
                         });
 
                         State.updateState(newState, function(err, result){

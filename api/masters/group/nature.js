@@ -1,7 +1,7 @@
 var express = require('express')
 var router = express.Router();
 
-var Nature = require('../../../models/masters/group/Nature');
+var Nature = require('../../../models/masters/group/nature');
 var cs = require('../../../helpers/compareStrings')
 
 router.get('/', function(req, res, next) {
@@ -65,7 +65,8 @@ router.post('/', function(req, res, next){
         } else {
 
             var nature = new Nature({
-                name: name
+                name: name,
+                isSystemNature: false
             });
 
             Nature.createNature(nature, function(err, result) {
@@ -83,6 +84,7 @@ router.put('/:id', function(req, res, next) {
 
     var id = req.params.id;
     var name = req.body.name;
+    var isSystemNature = req.body.isSystemNature;
 
     Nature.find(function(err, natures) {
 
@@ -102,7 +104,8 @@ router.put('/:id', function(req, res, next) {
 
                 var nature = new Nature({
                     _id: id,
-                    name: name
+                    name: name,
+                    isSystemNature: isSystemNature
                 });
 
                 Nature.updateNature(nature, function(err, result) {

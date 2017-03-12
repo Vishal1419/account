@@ -1,7 +1,7 @@
 var express = require('express')
 var router = express.Router();
 
-var Effect = require('../../../models/masters/group/Effect');
+var Effect = require('../../../models/masters/group/effect');
 var cs = require('../../../helpers/compareStrings')
 
 router.get('/', function(req, res, next) {
@@ -65,7 +65,8 @@ router.post('/', function(req, res, next){
         } else {
 
             var effect = new Effect({
-                name: name
+                name: name,
+                isSystemEffect: false
             });
 
             Effect.createEffect(effect, function(err, result) {
@@ -83,6 +84,7 @@ router.put('/:id', function(req, res, next) {
 
     var id = req.params.id;
     var name = req.body.name;
+    var isSystemEffect = req.body.isSystemEffect;
 
     Effect.find(function(err, effects) {
 
@@ -102,7 +104,8 @@ router.put('/:id', function(req, res, next) {
 
                 var effect = new Effect({
                     _id: id,
-                    name: name
+                    name: name,
+                    isSystemEffect: isSystemEffect
                 });
 
                 Effect.updateEffect(effect, function(err, result) {

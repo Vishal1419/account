@@ -1,7 +1,7 @@
 var express = require('express')
 var router = express.Router();
 
-var Country = require('../../models/landDivision/Country');
+var Country = require('../../models/landDivision/country');
 var cs = require('../../helpers/compareStrings')
 
 router.get('/', function(req, res, next) {
@@ -87,7 +87,8 @@ router.post('/', function(req, res, next){
 
             var country = new Country({
                 name: name,
-                code: code
+                code: code,
+                isSystemCountry: false
             });
 
             Country.createCountry(country, function(err, result) {
@@ -106,6 +107,7 @@ router.put('/:id', function(req, res, next) {
     var id = req.params.id;
     var name = req.body.name;
     var code = req.body.code;
+    var isSystemCountry = req.body.isSystemCountry;
 
     Country.find(function(err, countries) {
 
@@ -128,7 +130,8 @@ router.put('/:id', function(req, res, next) {
                 var country = new Country({
                     _id: id,
                     name: name,
-                    code: code
+                    code: code,
+                    isSystemCountry: isSystemCountry
                 });
 
                 Country.updateCountry(country, function(err, result) {

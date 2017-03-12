@@ -5,16 +5,20 @@ mongoose.connect('localhost:27017/accountdb');
 
 var natures = [
     new Nature({
-        name: 'Assets'
+        name: 'Assets',
+        isSystemNature: true
     }),
     new Nature({
-        name: 'Expenses'
+        name: 'Expenses',
+        isSystemNature: true
     }),
     new Nature({
-        name: 'Incomes'
+        name: 'Incomes',
+        isSystemNature: true
     }),
     new Nature({
-        name: 'Liabilities'
+        name: 'Liabilities',
+        isSystemNature: true
     })
 ];
 

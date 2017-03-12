@@ -38,17 +38,25 @@ var ledgerSchema = new Schema({
 var Ledger = module.exports = mongoose.model('Ledger', ledgerSchema);
 
 module.exports.getAllLedgers = function(callback){
-  Ledger.find().lean().exec(function(err, ledgers){
+  Ledger.find().sort('name').populate('parent').populate('details.mailing.state').populate('openingBalance.creditOrDebit').exec(function(err, ledgers){
     if (err) return callback(err, null);
     callback(null, ledgers);
   });
 };
 
 module.exports.getLedgerById = function(id, callback){
-  Ledger.find({_id: id}).lean().exec(function(err, ledger){
+  Ledger.find({_id: id}).sort('name').populate('parent').populate('details.mailing.state').populate('openingBalance.creditOrDebit').exec(function(err, ledger){
     if(err) return callback(err, null);
     callback(null, ledger);
   });
+};
+
+module.exports.getLedgerByName = function(name, callback){
+    name = encodeURL(name);
+    Ledger.find({name: new RegExp('^'+name+'$', "i")}).sort('name').populate('parent').populate('details.mailing.state').populate('openingBalance.creditOrDebit').exec(function(err, ledger){
+        if(err) return callback(err, null);
+        callback(null, ledger);
+    });
 };
 
 module.exports.createLedger = function(newLedger, callback){

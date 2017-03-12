@@ -1,9 +1,9 @@
 var express = require('express')
 var router = express.Router();
 
-var Effect = require('../../../models/masters/group/Effect');
-var Nature = require('../../../models/masters/group/Nature');
-var Group = require('../../../models/masters/group/Group');
+var Effect = require('../../../models/masters/group/effect');
+var Nature = require('../../../models/masters/group/nature');
+var Group = require('../../../models/masters/group/group');
 
 var cs = require('../../../helpers/compareStrings');
 
@@ -110,6 +110,7 @@ router.put('/:id', function(req, res, next) {
     var name = req.body.name;
     var alias = req.body.alias;
     var parent = (req.body.parent == null || req.body.parent == undefined) ? '' : req.body.parent.name;
+    var isSystemGroup = req.body.isSystemGroup;
 
     console.log(parent);
 
@@ -142,7 +143,7 @@ router.put('/:id', function(req, res, next) {
                         parent: parentGroup[0],
                         effect: parentGroup[0].effect,
                         nature: parentGroup[0].nature,
-                        isSystemGroup: false,
+                        isSystemGroup: isSystemGroup,
                         details: {
                             mailing: parentGroup[0].details.mailing,
                             contact: parentGroup[0].details.contact,

@@ -1,4 +1,4 @@
-angular.module('accountApp', ['ngRoute', 'effectApp', 'natureApp', 'groupApp', 'countryApp', 'stateApp']);
+angular.module('accountApp', ['ngRoute', 'effectApp', 'natureApp', 'groupApp', 'countryApp', 'stateApp', 'creditDebitApp']);
 
 angular.module('effectApp', ['ngRoute', 'jcs-autoValidate', 'ngFlash', 'LocalStorageModule'])
        .run(function(defaultErrorMessageResolver) {
@@ -60,4 +60,17 @@ angular.module('stateApp', ['ngRoute', 'jcs-autoValidate', 'ngFlash', 'LocalStor
        })
        .config(function (localStorageServiceProvider) {
           localStorageServiceProvider.setPrefix('lsState').setStorageCookieDomain('');
+       });
+
+angular.module('creditDebitApp', ['ngRoute', 'jcs-autoValidate', 'ngFlash', 'LocalStorageModule'])
+       .run(function(defaultErrorMessageResolver) {
+           defaultErrorMessageResolver.getErrorMessages().then(function(errorMessages) {
+                errorMessages['uniqueCreditDebit'] = "CreditDebit name already exists.";
+                errorMessages['requiredCreditDebit'] = "CreditDebit name is required";
+                errorMessages['uniqueCreditDebitCode'] = "CreditDebit code already exists.";
+                errorMessages['requiredCreditDebitCode'] = "CreditDebit code is required";
+           });
+       })
+       .config(function (localStorageServiceProvider) {
+          localStorageServiceProvider.setPrefix('lsCreditDebit').setStorageCookieDomain('');
        });

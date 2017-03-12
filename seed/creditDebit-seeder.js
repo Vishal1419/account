@@ -5,10 +5,14 @@ mongoose.connect('localhost:27017/accountdb');
 
 var creditDebits = [
     new CreditDebit({
-        name: 'Credit'
+        name: 'Credit',
+        code: 'Cr',
+        isSystemCreditDebit: true
     }),
     new CreditDebit({
-        name: 'Debit'
+        name: 'Debit',
+        code: 'Dr',
+        isSystemCreditDebit: true
     })
 ];
 

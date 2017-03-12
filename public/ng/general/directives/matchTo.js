@@ -1,24 +1,46 @@
 angular
     .module('accountApp')
-    .directive('matchTo', function() {
+    .directive('matchTo', function($parse) {
         return {
             restrict: 'A',
             require: 'ngModel',
-            scope: {
-                otherModelValue: '=matchTo'
-            },
             link: function(scope, elm, attrs, ctrl) {
 
+                // var attributes = scope.$eval(attrs.matchTo);
+
                 ctrl.$validators.matchTo = function(modelValue) {
-                    if(scope.otherModelValue == undefined || scope.otherModelValue == null) {
-                        return true;
+
+                    var attributes = scope.$eval(attrs.matchTo);
+
+                    if(attributes.unequal == undefined) {
+                        attributes.unequal = false;
+                    }
+
+                    console.log(modelValue);
+                    console.log(attributes.matchString);
+                    console.log(attributes.unequal);
+
+                    if(attributes.unequal) {
+                        if(modelValue == undefined || attributes.matchString == undefined || attributes.matchString == null) {
+                            return true;
+                        } else {
+                            return modelValue.toLowerCase() != attributes.matchString.toLowerCase();
+                        }
                     } else {
-                        return modelValue != scope.otherModelValue;
+                        if(modelValue == undefined || attributes.matchString == undefined || attributes.matchString == null) {
+                            return false;
+                        } else {
+                            return modelValue.toLowerCase() == attributes.matchString.toLowerCase();
+                        }                        
                     }
                 }
-
-                scope.$watch('otherModelValue', function() {
+                
+                var matchTo = $parse(attrs.matchTo);
+                scope.$watch(function () {
+                    return matchTo(scope).matchString;
+                }, function (value) {
                     ctrl.$validate();
+                    console.log(value);
                 });
             }
         }

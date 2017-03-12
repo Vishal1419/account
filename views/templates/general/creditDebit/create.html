@@ -23,8 +23,10 @@
                             ng-disabled="isReadOnly" autocomplete="off"
                             required 
                             unique-record="{ url: '/api/creditDebit', optionalPart: '/code', currentRecordName: currentCreditDebitCode }"
+                            match-to="{ matchString: creditDebit.name, unequal: true}"
                             ng-required-err-type="requiredCreditDebitCode"
-                            ng-uniqueRecord-err-type="uniqueCreditDebitCode" />
+                            ng-uniqueRecord-err-type="uniqueCreditDebitCode"
+                            ng-matchTo-err-type="unMatchNameAndCode" />
                 </div>
                 <div class="row">
                     <div class="form-group form-controls">

@@ -23,8 +23,10 @@
                             ng-disabled="isReadOnly" autocomplete="off"
                             required 
                             unique-record="{ url: '/api/country', optionalPart: '/code', currentRecordName: currentCountryCode }"
+                            match-to="{ matchString: country.name, unequal: true}"
                             ng-required-err-type="requiredCountryCode"
-                            ng-uniqueRecord-err-type="uniqueCountryCode" />
+                            ng-uniqueRecord-err-type="uniqueCountryCode"
+                            ng-matchTo-err-type="unMatchNameAndCode" />
                 </div>
                 <div class="row">
                     <div class="form-group form-controls">

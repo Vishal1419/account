@@ -31,10 +31,10 @@
                             typeahead-template-url="group-template.html"
                             required
                             unique-record="{ url: '/api/group', reverse: true }"
-                            match-to="group.name"
+                            match-to="{ matchString: group.name, unequal: true}"
                             ng-required-err-type="requiredParentGroup"
                             ng-uniqueRecord-err-type="noGroupFound"
-                            ng-matchTo-err-type="parentNotAllowed" />
+                            ng-matchTo-err-type="unMatchNameAndParent" />
                 </div>
                 <div class="row">
                     <div class="form-group form-controls">

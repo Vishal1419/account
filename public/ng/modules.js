@@ -29,7 +29,7 @@ angular.module('groupApp', ['ngRoute', 'jcs-autoValidate', 'ngFlash', 'LocalStor
                 errorMessages['requiredGroup'] = "Group name is required";
                 errorMessages['requiredParentGroup'] = "Parent group is required";
                 errorMessages['noGroupFound'] = "Choose group from the list";
-                errorMessages['parentNotAllowed'] = "Group name and Parent group name should be different";
+                errorMessages['unMatchNameAndParent'] = "Group name and Parent group name should be different";
            });
        })
        .config(function (localStorageServiceProvider) {
@@ -43,6 +43,7 @@ angular.module('countryApp', ['ngRoute', 'jcs-autoValidate', 'ngFlash', 'LocalSt
                 errorMessages['requiredCountry'] = "Country name is required";
                 errorMessages['uniqueCountryCode'] = "Country code already exists.";
                 errorMessages['requiredCountryCode'] = "Country code is required";
+                errorMessages['unMatchNameAndCode'] = "Country name and Country code should be different";                
            });
        })
        .config(function (localStorageServiceProvider) {
@@ -69,6 +70,7 @@ angular.module('creditDebitApp', ['ngRoute', 'jcs-autoValidate', 'ngFlash', 'Loc
                 errorMessages['requiredCreditDebit'] = "CreditDebit name is required";
                 errorMessages['uniqueCreditDebitCode'] = "CreditDebit code already exists.";
                 errorMessages['requiredCreditDebitCode'] = "CreditDebit code is required";
+                errorMessages['unMatchNameAndCode'] = "CreditDebit name and CreditDebit code should be different";                                
            });
        })
        .config(function (localStorageServiceProvider) {

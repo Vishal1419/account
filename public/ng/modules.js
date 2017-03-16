@@ -1,4 +1,4 @@
-angular.module('accountApp', ['ngRoute', 'effectApp', 'natureApp', 'groupApp', 'countryApp', 'stateApp', 'creditDebitApp']);
+angular.module('accountApp', ['ngRoute', 'effectApp', 'natureApp', 'groupApp', 'countryApp', 'stateApp', 'creditDebitApp', 'ledgerApp']);
 
 angular.module('effectApp', ['ngRoute', 'jcs-autoValidate', 'ngFlash', 'LocalStorageModule'])
        .run(function(defaultErrorMessageResolver) {
@@ -76,4 +76,19 @@ angular.module('creditDebitApp', ['ngRoute', 'jcs-autoValidate', 'ngFlash', 'Loc
        })
        .config(function (localStorageServiceProvider) {
           localStorageServiceProvider.setPrefix('lsCreditDebit').setStorageCookieDomain('');
+       });
+
+angular.module('ledgerApp', ['ngRoute', 'jcs-autoValidate', 'ngFlash', 'LocalStorageModule', 'ui.bootstrap'])
+       .run(function(defaultErrorMessageResolver) {
+           defaultErrorMessageResolver.getErrorMessages().then(function(errorMessages) {
+                errorMessages['uniqueLedger'] = "Ledger name already exists.";
+                errorMessages['requiredLedger'] = "Ledger name is required";
+                errorMessages['noGroupFound'] = "Choose parent group from list";
+                errorMessages['requiredParentGroup'] = "Parent group is required";
+                errorMessages['unMatchParentGroupAndLedger'] = "Parent name and Ledger name should be different";
+                errorMessages['noCreditDebitFound'] = "Choose credit or debit from list";
+           });
+       })
+       .config(function (localStorageServiceProvider) {
+          localStorageServiceProvider.setPrefix('lsLedger').setStorageCookieDomain('');
        });

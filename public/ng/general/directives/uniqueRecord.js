@@ -9,7 +9,11 @@ angular
 
                     var value = modelValue || viewValue;
 
-                    if (typeof value === 'string' || value instanceof String) {
+                    if(value == undefined || value == '') {
+                        return new Promise(function(fullfill, reject) {
+                            return true;
+                        });
+                    } else if (typeof value === 'string' || value instanceof String) {
                         value = encodeURL(value);
                     } else {
                         value = encodeURL(value.name);

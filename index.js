@@ -17,6 +17,7 @@ var group = require('./api/masters/group/group');
 var country = require('./api/landDivision/country');
 var state = require('./api/landDivision/state');
 var creditDebit = require('./api/general/creditDebit');
+var ledger = require('./api/masters/ledger/ledger');
 
 var app = express();
 
@@ -119,6 +120,7 @@ app.use('/api/group', group);
 app.use('/api/country', country);
 app.use('/api/state', state);
 app.use('/api/creditDebit', creditDebit);
+app.use('/api/ledger', ledger);
 
 app.get('*', function(req, res) {
     res.render('index.html.ejs');

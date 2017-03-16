@@ -1,0 +1,186 @@
+<div class="col-md-10 col-md-offset-1">
+    <div ng-controller="ledgerController">
+        <flash-message></flash-message>        
+        <div class="row">
+            <div class="col-md-1">
+                <button type="button" class="btn btn-primary btn-list btn-list-fix" ng-click="listLedgers()"></button>
+            </div>
+        </div>
+        <div class="row">
+            <form name="groupForm" ng-submit="submit(ledger)" novalidate>
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label for="name" class="control-label">Name</label>
+                        <input type="text" id="name" name="name" class="form-control form-input" ng-model="ledger.name"
+                                ng-disabled="isReadOnly" autocomplete="off"
+                                required 
+                                unique-record="{ url: '/api/ledger', currentRecordName: currentLedgerName }"
+                                ng-required-err-type="requiredLedger"
+                                ng-uniqueRecord-err-type="uniqueLedger" />
+                    </div>
+                    <div class="form-group">
+                        <label for="alias" class="control-label">Alias</label>
+                        <input type="text" id="alias" name="alias" class="form-control form-input" ng-model="ledger.alias"
+                                ng-disabled="isReadOnly" autocomplete="off" />
+                    </div>
+                    <div class="form-group">
+                        <label for="parent" class="control-label">Parent Group</label>
+                        <input type="text" id="parent" name="parent" class="form-control form-input" ng-model="ledger.parent"
+                                ng-disabled="isReadOnly" autocomplete="off" 
+                                typeahead-min-length="0" 
+                                uib-typeahead="group as group.name for group in groups | typeaheadFilter:{'name':$viewValue} | orderBy:smartOrder" 
+                                typeahead-template-url="group-template.html"
+                                required
+                                unique-record="{ url: '/api/group', reverse: true }"
+                                match-to="{ matchString: ledger.name, unequal: true}"
+                                ng-required-err-type="requiredParentGroup"
+                                ng-uniqueRecord-err-type="noGroupFound"
+                                ng-matchTo-err-type="unMatchParentGroupAndLedger" />
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Opening Balance</div>
+                        <div class="panel-body form-inline">
+                            <div class="form-group col-md-12">
+                                <label for="openingBalanceAmount" class="control-label col-md-3 make-inline">Amount : </label>
+                                <input type="text" id="openingBalanceAmount" name="openingBalanceAmount" class="form-control form-input col-md-9 make-inline-half" ng-model="ledger.openingBalance.amount"
+                                        ng-disabled="isReadOnly" autocomplete="off" />
+                                <input type="text" id="openingBalanceCreditOrDebit" name="openingBalanceCreditOrDebit" class="form-control form-input col-md-9 make-inline-half" ng-model="ledger.openingBalance.creditOrDebit"
+                                        ng-disabled="isReadOnly" autocomplete="off" 
+                                        typeahead-min-length="0" 
+                                        uib-typeahead="creditDebit as creditDebit.code for creditDebit in creditDebits | typeaheadFilter:{'code':$viewValue} | orderBy:smartOrder" 
+                                        typeahead-template-url="creditDebit-template.html"
+                                        unique-record="{ url: '/api/creditDebit', reverse: true }"
+                                        ng-uniqueRecord-err-type="noCreditDebitFound" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5 col-md-offset-2">
+                    <div class="panel panel-default" ng-show="ledger.parent.details.mailing">
+                        <div class="panel-heading">Mailing Details</div>
+                        <div class="panel-body form-inline">
+                            <div class="form-group col-md-12">
+                                <label for="mailingName" class="control-label col-md-3 make-inline">Name : </label>
+                                <input type="text" id="mailingName" name="mailingName" class="form-control form-input col-md-9 make-inline" ng-model="ledger.details.mailing.name"
+                                        ng-disabled="isReadOnly" autocomplete="off" />
+                            </div>
+                            <br />
+                            <div class="form-group col-md-12">
+                                <label for="mailingAddress" class="control-label col-md-3 make-inline">Address :</label>
+                                <textarea rows="4" type="text" id="mailingAddress" name="mailingAddress" class="form-control form-input col-md-9 make-inline" ng-model="ledger.details.mailing.address"
+                                          ng-disabled="isReadOnly" autocomplete="off"></textarea>
+                            </div>
+                            <br />
+                            <div class="form-group col-md-12">
+                                <label for="mailingState" class="control-label col-md-3 make-inline">State :</label>
+                                <input type="text" id="mailingState" name="mailingState" class="form-control form-input col-md-9 make-inline" ng-model="ledger.details.mailing.state"
+                                        ng-disabled="isReadOnly" autocomplete="off" 
+                                        typeahead-min-length="0" 
+                                        uib-typeahead="state as state.name for state in states | typeaheadFilter:{'name':$viewValue} | orderBy:smartOrder" 
+                                        typeahead-template-url="state-template.html"
+                                        unique-record="{ url: '/api/state', reverse: true }"
+                                        ng-uniqueRecord-err-type="noStateFound" />
+                            </div>
+                            <br />
+                            <div class="form-group col-md-12">
+                                <label for="mailingPincode" class="control-label col-md-3 make-inline">Pin code :</label>
+                                <input type="text" id="mailingPincode" name="mailingPincode" class="form-control form-input col-md-9 make-inline" ng-model="ledger.details.mailing.pincode"
+                                        ng-disabled="isReadOnly" autocomplete="off" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default" ng-show="ledger.parent.details.contact">
+                        <div class="panel-heading">Contact Details</div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label for="contactPerson" class="control-label">Contact Person :</label>
+                                <input type="text" id="contactPerson" name="contactPerson" class="form-control form-input" ng-model="ledger.details.contact.contactPerson"
+                                        ng-disabled="isReadOnly" autocomplete="off" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Mobile number :</label>
+                                <input type="text" id="contactMobile1" name="contactMobile1" class="form-control form-input" ng-model="ledger.details.contact.mobile1"
+                                        ng-disabled="isReadOnly" autocomplete="off" />
+                                <input type="text" id="contactMobile2" name="contactMobile2" class="form-control form-input" ng-model="ledger.details.contact.mobile2"
+                                        ng-disabled="isReadOnly" autocomplete="off" />
+                            </div>
+                            <div class="form-group">
+                                <label for="contactEmail" class="control-label">Email address :</label>
+                                <input type="text" id="contactEmail" name="contactEmail" class="form-control form-input" ng-model="ledger.details.contact.email"
+                                        ng-disabled="isReadOnly" autocomplete="off" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default" ng-show="ledger.parent.details.bank">
+                        <div class="panel-heading">Bank Details</div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label for="bankAccountNumber" class="control-label">Account Number :</label>
+                                <input type="text" id="bankAccountNumber" name="bankAccountNumber" class="form-control form-input" ng-model="ledger.details.bank.accountNumber"
+                                        ng-disabled="isReadOnly" autocomplete="off" />
+                            </div>
+                            <div class="form-group">
+                                <label for="bankBranchName" class="control-label">Branch Name :</label>
+                                <input type="text" id="bankBranchName" name="bankBranchName" class="form-control form-input" ng-model="ledger.details.bank.branchName"
+                                        ng-disabled="isReadOnly" autocomplete="off" />
+                            </div>
+                            <div class="form-group">
+                                <label for="bankBsrCode" class="control-label">BSR Code :</label>
+                                <input type="text" id="bankBsrCode" name="bankBsrCode" class="form-control form-input" ng-model="ledger.details.bank.bsrCode"
+                                        ng-disabled="isReadOnly" autocomplete="off" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default" ng-show="ledger.parent.details.tax">
+                        <div class="panel-heading">Tax Details</div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label for="taxPanOrItNumber" class="control-label">PAN / IT Number :</label>
+                                <input type="text" id="taxPanOrItNumber" name="taxPanOrItNumber" class="form-control form-input" ng-model="ledger.details.tax.panOrItNumber"
+                                        ng-disabled="isReadOnly" autocomplete="off" />
+                            </div>
+                            <div class="form-group">
+                                <label for="taxSalesTaxNumber" class="control-label">Address :</label>
+                                <input type="text" id="taxSalesTaxNumber" name="taxSalesTaxNumber" class="form-control form-input" ng-model="ledger.details.tax.salesTaxNumber"
+                                        ng-disabled="isReadOnly" autocomplete="off" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group form-controls">
+                        <button id="submit" type="submit" class="btn btn-success btn-input submit" ng-hide="isReadOnly">Save</button>
+                        <button id="clear" type="reset" class="btn btn-input clear" ng-class="isReadOnly ? 'btn-primary' : 'btn-danger'" ng-click="clear()" ng-init="Clear">{{clearButtonText}}</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/ng-template" id="group-template.html">
+    <a tabindex="-1">
+        <div class="row">
+            <span class="col-md-6 col-sm-6" ng-bind-html="match.model.name | uibTypeaheadHighlight:query"></span>
+            <span class="col-md-5 col-sm-5 col-md-offset-1 col-sm-offset-1" ng-bind-html="match.model.effect.name  | uibTypeaheadHighlight:query"></span>
+        </div>
+    </a>
+</script>
+
+<script type="text/ng-template" id="state-template.html">
+    <a tabindex="-1">
+        <div class="row">
+            <span class="col-md-6 col-sm-6" ng-bind-html="match.model.name | uibTypeaheadHighlight:query"></span>
+            <span class="col-md-5 col-sm-5 col-md-offset-1 col-sm-offset-1" ng-bind-html="match.model.country.name  | uibTypeaheadHighlight:query"></span>
+        </div>
+    </a>
+</script>
+
+<script type="text/ng-template" id="creditDebit-template.html">
+    <a tabindex="-1">
+        <div class="row">
+            <span class="col-md-6 col-sm-6" ng-bind-html="match.model.code | uibTypeaheadHighlight:query"></span>
+            <span class="col-md-5 col-sm-5 col-md-offset-1 col-sm-offset-1" ng-bind-html="match.model.name  | uibTypeaheadHighlight:query"></span>
+        </div>
+    </a>
+</script>

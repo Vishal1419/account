@@ -6,7 +6,7 @@ angular
 
         //When controller is refreshed, get necessary data back from service
 
-        if($route.current.originalPath == '/group/create') {
+        if($route.current.originalPath == '/group/create' || $route.current.originalPath == '/stockgroup/create') {
             
             $scope.group = null;
             ls.remove('group');
@@ -15,7 +15,7 @@ angular
             $scope.clearButtonText = 'Clear';
             $scope.isReadOnly = false;
 
-        } else if($route.current.originalPath == '/group/edit/:id') {
+        } else if($route.current.originalPath == '/group/edit/:id' || $route.current.originalPath == '/stockgroup/edit/:id') {
 
             $scope.group = ls.get('group');
             $scope.currentGroupName = ls.get('currentGroupName');
@@ -23,13 +23,22 @@ angular
             $scope.clearButtonText = 'Cancel';
 
             var id = $route.current.params.id;
-            groupService.getById(id).then(function(group) {
-                if(group[0] == undefined) {
-                    $location.path('/groups');
-                }
-            });
 
-        } else if($route.current.originalPath == '/group/view/:id') {
+            if($route.current.originalPath == '/stockgroup/edit/:id') {
+                groupService.getStockGroupById(id).then(function(group) {
+                    if(group == undefined) {
+                        $location.path('/stockgroups');
+                    }
+                });
+            } else {
+                groupService.getById(id).then(function(group) {
+                    if(group[0] == undefined) {
+                        $location.path('/groups');
+                    }
+                });
+            }
+
+        } else if($route.current.originalPath == '/group/view/:id' || $route.current.originalPath == '/stockgroup/view/:id') {
 
             $scope.group = ls.get('group');
             $scope.currentGroupName = ls.get('currentGroupName');
@@ -37,11 +46,20 @@ angular
             $scope.clearButtonText = 'OK';
 
             var id = $route.current.params.id;
-            groupService.getById(id).then(function(group) {
-                if(group[0] == undefined) {
-                    $location.path('/groups');
-                }
-            });
+
+            if($route.current.originalPath == '/stockgroup/view/:id') {
+                groupService.getStockGroupById(id).then(function(group) {
+                    if(group == undefined) {
+                        $location.path('/stockgroups');
+                    }
+                });
+            } else {
+                groupService.getById(id).then(function(group) {
+                    if(group[0] == undefined) {
+                        $location.path('/groups');
+                    }
+                });
+            }
 
         } else {
 
@@ -55,16 +73,27 @@ angular
         }
 
         var reload = function() {
-            groupService.fetch()
-                        .then(function(groups) {
-                            $scope.groups = groups;
-                        });
+            if($route.current.originalPath == '/stockgroups' || $route.current.originalPath == '/stockgroup/create' || $route.current.originalPath == '/stockgroup/edit/:id' || $route.current.originalPath == '/stockgroup/view/:id') {
+                groupService.fetch("Stock-in-Hand")
+                    .then(function(groups) {
+                        $scope.groups = groups;
+                    });
+            } else {
+                groupService.fetch()
+                    .then(function(groups) {
+                        $scope.groups = groups;
+                    });
+            }
         }
 
         reload();
 
         $scope.create = function() {
-            $location.path('/group/create');            
+            if($route.current.originalPath == '/stockgroups') {
+                $location.path('/stockgroup/create');            
+            } else {
+                $location.path('/group/create');            
+            }
         }
 
         $scope.clear = function() {
@@ -79,12 +108,20 @@ angular
             $scope.isReadOnly = false;
             
             if(!(group == null || group._id == undefined || group._id == null)) {
-                $location.path('/groups');
+                if($route.current.originalPath == '/stockgroup/create' || $route.current.originalPath == '/stockgroup/edit/:id' || $route.current.originalPath == '/stockgroup/view/:id') {
+                    $location.path('/stockgroups');            
+                } else {
+                    $location.path('/groups');            
+                }
             }
         }
 
         $scope.listGroups = function() {
-            $location.path('/groups');
+            if($route.current.originalPath == '/stockgroup/create' || $route.current.originalPath == '/stockgroup/edit/:id' || $route.current.originalPath == '/stockgroup/view/:id') {
+                $location.path('/stockgroups');            
+            } else {
+                $location.path('/groups');            
+            }
         }
 
         $scope.editGroup = function(group, isReadOnly) {
@@ -95,9 +132,17 @@ angular
             ls.set('group', $scope.group);
             
             if(isReadOnly) {
-                $location.path('/group/view/' + group._id);
+                if($route.current.originalPath == '/stockgroups') {
+                    $location.path('/stockgroup/view/' + group._id);
+                } else {
+                    $location.path('/stockgroup/view/' + group._id);
+                }
             } else {
-                $location.path('/group/edit/' + group._id);
+                if($route.current.originalPath == '/groups') {
+                    $location.path('/group/edit/' + group._id);
+                } else {
+                    $location.path('/group/edit/' + group._id);
+                }
             }     
         
         }
@@ -119,7 +164,11 @@ angular
                         if(!(group._id == undefined || group._id == '')) {
                             $scope.currentGroupName = '';                         
                             ls.remove('currentGroupName');
-                            $location.path('/groups');
+                            if($route.current.originalPath == '/stockgroup/create' || $route.current.originalPath == '/stockgroup/edit/:id') {
+                                $location.path('/stockgroups');
+                            } else {
+                                $location.path('/groups');
+                            }
                         }
                     }
 

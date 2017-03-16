@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var encodeURL = require("../../../helpers/encodeURL");
+var { wrap } = require("co");
 
 var groupSchema = new Schema({
     name: {type: String, required: true},
@@ -26,6 +27,23 @@ module.exports.getAllGroups = function(callback){
     callback(null, groups);
   });
 };
+
+module.exports.getDescendentsOfSelectedGroup = wrap(function*(topGroupId, generations) {
+  
+  const topGroup = yield Group.find({parent: topGroupId}).populate('parent').populate('effect').populate('nature');
+  
+  let groups = [];
+  let ids = [topGroupId];
+
+  for(let i = 0; i < generations; i++) {
+    const thisLevelGroups = yield Group.find({ parent : { $in : ids } }).populate('parent').populate('effect').populate('nature');
+    ids = thisLevelGroups.map(group => group._id);
+    groups = groups.concat(thisLevelGroups);
+  }
+
+  return groups;
+
+});
 
 module.exports.getGroupById = function(id, callback){
   Group.find({_id: id}).sort('name').populate('parent').populate('effect').populate('nature').exec(function(err, group){

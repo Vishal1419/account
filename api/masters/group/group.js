@@ -17,6 +17,22 @@ router.get('/', function(req, res, next) {
 
 });
 
+router.get('/descendents/:name', function(req, res, next) {
+
+    var groupName = req.params.name;
+
+    Group.getGroupByName(groupName, function(err, group) {
+        var groupId = group[0]._id;
+        Group.getDescendentsOfSelectedGroup(groupId, 100).then( function(groups) {
+                groups.push(group[0]);
+                console.log(groups);
+                res.status(200).json(groups);
+            }
+        );
+    });
+
+});
+
 router.get('/:id', function(req, res, next){
 
   var groupId = req.params.id;

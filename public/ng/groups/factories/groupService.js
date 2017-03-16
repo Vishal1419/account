@@ -1,24 +1,44 @@
 angular
     .module('groupApp')
     .factory('groupService', function($http) {
-        var factory = { fetch: fetch, getById: getById, save: save, remove: remove };
+        var factory = { fetch: fetch, getById: getById, getStockGroupById: getStockGroupById,
+                        save: save, remove: remove };
 
         return factory; 
 
         //Usual CRUD operations
         //---------------------------------------------------------------
 
-        function fetch() {
-            return $http.get('/api/group')
-                        .then(function(response) {
-                            return response.data;
-                        });
+        function fetch(groupName) {
+            if(groupName) {
+                return $http.get('/api/group/descendents/' + groupName)
+                            .then(function(response) {
+                                return response.data;
+                            });
+            } else {
+                return $http.get('/api/group')
+                            .then(function(response) {
+                                return response.data;
+                            });                
+            }
         }
 
         function getById(id) {
             return $http.get('/api/group/' + id)
                         .then(function(group) {
                             return group.data;
+                        });
+        }
+
+        function getStockGroupById(groupName, id) {
+            return $http.get('/api/group/descendents/' + groupName)
+                        .then(function(groups) {
+                            groups.forEach(function(group) {
+                                if(group._id == id) {
+                                    return group.data;
+                                }
+                            }, this);
+                            return;
                         });
         }
 

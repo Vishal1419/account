@@ -1,0 +1,45 @@
+<div class="col-md-4 col-md-offset-4">
+    <div ng-controller="unitController">
+        <flash-message></flash-message>        
+        <div class="row">
+            <div class="col-md-1">
+                <button type="button" class="btn btn-primary btn-list btn-list-fix" ng-click="listUnits()"></button>
+            </div>
+        </div>
+        <div class="row">
+            <form name="unitForm" ng-submit="submit(unit)" novalidate>
+                <div class="form-group">
+                    <label for="name" class="control-label">Name</label>
+                    <input type="text" id="name" name="name" class="form-control form-input" ng-model="unit.name"
+                            ng-disabled="isReadOnly" autocomplete="off"
+                            required 
+                            unique-record="{ url: '/api/unit', currentRecordName: currentUnitName }"
+                            ng-required-err-type="requiredUnitName"
+                            ng-uniqueRecord-err-type="uniqueUnitName" />
+                </div>
+                <div class="form-group">
+                    <label for="symbol" class="control-label">Symbol</label>
+                    <input type="text" id="symbol" name="symbol" class="form-control form-input" ng-model="unit.symbol"
+                            ng-disabled="isReadOnly" autocomplete="off"
+                            required 
+                            unique-record="{ url: '/api/unit', optionalPart: '/symbol', currentRecordName: currentUnitSymbol }"
+                            ng-required-err-type="requiredUnitSymbol"
+                            ng-uniqueRecord-err-type="uniqueUnitSymbol" />
+                </div>
+                <div class="form-group">
+                    <label for="numberOfDecimalPlaces" class="control-label">Number of Decimal Places</label>
+                    <input type="text" id="numberOfDecimalPlaces" name="numberOfDecimalPlaces" class="form-control form-input" ng-model="unit.numberOfDecimalPlaces"
+                            ng-disabled="isReadOnly" autocomplete="off"
+                            required 
+                            ng-required-err-type="requiredUnitNumberOfDecimalPlaces" />
+                </div>
+                <div class="row">
+                    <div class="form-group form-controls">
+                        <button id="submit" type="submit" class="btn btn-success btn-input submit" ng-hide="isReadOnly">Save</button>
+                        <button id="clear" type="reset" class="btn btn-input clear" ng-class="isReadOnly ? 'btn-primary' : 'btn-danger'" ng-click="clear()" ng-init="Clear">{{clearButtonText}}</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

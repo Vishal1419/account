@@ -1,4 +1,4 @@
-angular.module('accountApp', ['ngRoute', 'effectApp', 'natureApp', 'groupApp', 'countryApp', 'stateApp', 'creditDebitApp', 'ledgerApp']);
+angular.module('accountApp', ['ngRoute', 'effectApp', 'natureApp', 'groupApp', 'countryApp', 'stateApp', 'creditDebitApp', 'ledgerApp', 'unitApp']);
 
 angular.module('effectApp', ['ngRoute', 'jcs-autoValidate', 'ngFlash', 'LocalStorageModule'])
        .run(function(defaultErrorMessageResolver) {
@@ -91,4 +91,18 @@ angular.module('ledgerApp', ['ngRoute', 'jcs-autoValidate', 'ngFlash', 'LocalSto
        })
        .config(function (localStorageServiceProvider) {
           localStorageServiceProvider.setPrefix('lsLedger').setStorageCookieDomain('');
+       });
+
+angular.module('unitApp', ['ngRoute', 'jcs-autoValidate', 'ngFlash', 'LocalStorageModule'])
+       .run(function(defaultErrorMessageResolver) {
+           defaultErrorMessageResolver.getErrorMessages().then(function(errorMessages) {
+                errorMessages['uniqueUnitName'] = "Unit Name already exists.";
+                errorMessages['requiredUnitName'] = "Unit name is required";
+                errorMessages['uniqueUnitSymbol'] = "Unit Symbol already exists.";
+                errorMessages['requiredUnitSymbol'] = "Unit symbol is required";
+                errorMessages['requiredUnitNumberOfDecimalPlaces'] = "Please enter number of decimal places.";
+           });
+       })
+       .config(function (localStorageServiceProvider) {
+          localStorageServiceProvider.setPrefix('lsUnit').setStorageCookieDomain('');
        });

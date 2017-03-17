@@ -70,7 +70,7 @@ module.exports.updateLedger = function(updatedValuesOfExistingLedger, callback){
     console.log(updatedValuesOfExistingLedger);
 
     const operators = { "$set" : {
-                            "name" : updatedValuesOfExistingLedger, 
+                            "name" : updatedValuesOfExistingLedger.name, 
                             "parent" : updatedValuesOfExistingLedger.parent, 
                             "isSystemLedger" : updatedValuesOfExistingLedger.isSystemLedger 
                          }

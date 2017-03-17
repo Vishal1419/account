@@ -8,11 +8,36 @@ var Group = require('../../../models/masters/group/group');
 var cs = require('../../../helpers/compareStrings');
 
 router.get('/', function(req, res, next) {
-
-    //retrieve all groups from Group model
     Group.getAllGroups(function(err, groups) {
-        if(err) { res.status(400).json(err); }
+        if(err) { return res.status(400).json(err); }
         else { res.status(200).json(groups); }
+    });
+});
+
+router.get('/withoutDescendents/:name', function(req, res, next) {
+
+    var groupName = req.params.name;
+
+    Group.getAllGroups(function(err, groups) {
+        if(err) { return res.status(400).json(err) }
+        else {
+            if(groupName == undefined) {
+                return res.status(200).json(groups);
+            } else {
+                Group.getGroupByName(groupName, function(err, group) {
+                    var groupId = group[0]._id;
+                    Group.getDescendentsOfSelectedGroup(groupId, 100).then( function(thisGroups) {
+                            thisGroups.push(group[0]);
+                            thisGroups.forEach(function(thisGroup) {
+                                var index = groups.map(function(group) { return group.name; }).indexOf(thisGroup.name);
+                                groups.splice(index, 1);
+                            }, this);
+                            return res.status(200).json(groups);
+                        }
+                    );
+                });
+            }
+        }
     });
 
 });
@@ -25,7 +50,6 @@ router.get('/descendents/:name', function(req, res, next) {
         var groupId = group[0]._id;
         Group.getDescendentsOfSelectedGroup(groupId, 100).then( function(groups) {
                 groups.push(group[0]);
-                console.log(groups);
                 res.status(200).json(groups);
             }
         );
@@ -61,6 +85,61 @@ router.get('/:name/:currentGroupName', function(req, res, next){
         }
 
   });
+
+});
+
+router.get('/withoutDescendents/:name/:currentGroupName', function(req, res, next) {
+
+    var groupName = req.params.name;
+    var currentGroupName = req.params.currentGroupName;
+
+    Group.getAllGroups(function(err, groups) {
+        if(err) { return res.status(400).json(err) }
+        else {
+            if(currentGroupName == undefined || currentGroupName == "_") {
+                return res.status(200).json(groups);
+            } else {
+                Group.getGroupByName(currentGroupName, function(err, group) {
+                    var groupId = group[0]._id;
+                    Group.getDescendentsOfSelectedGroup(groupId, 100).then( function(thisGroups) {
+                            thisGroups.push(group[0]);
+                            thisGroups.forEach(function(thisGroup) {
+                                var index = groups.map(function(group) { return group.name; }).indexOf(thisGroup.name);
+                                groups.splice(index, 1);
+                            }, this);
+                            groups.forEach(function(thisGroup) {
+                                if(cs(thisGroup.name, groupName, true, false)) {
+                                    return res.status(200).json(thisGroup);
+                                }
+                            }, this);
+                            return res.status(404).json({});
+                        }
+                    );
+                });
+            }
+        }
+    });
+
+});
+
+router.get('/descendents/:name/:currentGroupName', function(req, res, next){
+
+    var groupName = req.params.name;
+    var currentGroupName = req.params.currentGroupName;
+
+    Group.getGroupByName(currentGroupName, function(err, group) {
+        var groupId = group[0]._id;
+        Group.getDescendentsOfSelectedGroup(groupId, 100).then( function(groups) {
+                groups.push(group[0]);
+                groups.forEach(function(thisGroup) {
+                    if(cs(thisGroup.name, groupName, true, false)) {
+                        return res.status(200).json(thisGroup);
+                    }
+                }, this);
+                return res.status(404).json({});
+            }
+        );
+    });
 
 });
 

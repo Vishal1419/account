@@ -21,6 +21,16 @@ angular
 
                     var attributes = scope.$eval(attrs.uniqueRecord);
 
+                    if(attributes.selectedOnly == undefined) {
+                        attributes.selectedOnly = false;
+                    } else {
+                        if(attributes.selectedOnly) {
+                            attributes.url = attributes.url.substring(0, attributes.url.lastIndexOf('/'));
+                        } else {
+                            attributes.optionalPart = '';
+                        }
+                    }
+
                     if(attributes.optionalPart == undefined) {
                         attributes.optionalPart = '';
                     }
@@ -37,12 +47,14 @@ angular
 
                     return $http.get(attributes.url + attributes.optionalPart + '/' + value + '/' + attributes.currentRecordName)
                                 .then(function resolved() {
+                                    console.log('resolved');
                                     if(attributes.reverse) {
                                         return true;
                                     } else {
                                         return $q.reject('exists');
                                     }
                                 }, function rejected() {
+                                    console.log('rejected');
                                     if(attributes.reverse) {
                                         return $q.reject('exists');
                                     } else {

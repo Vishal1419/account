@@ -59,7 +59,7 @@ angular
                         .then(function(ledgers) {
                             $scope.ledgers = ledgers;
                         });
-            ledgerService.fetchGroups()
+            ledgerService.fetchGroups("Stock-in-Hand")
                         .then(function(groups) {
                             $scope.groups = groups;
                         });

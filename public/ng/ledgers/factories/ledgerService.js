@@ -16,8 +16,8 @@ angular
                         });
         }
 
-        function fetchGroups() {
-            return $http.get('/api/group')
+        function fetchGroups(groupName) {
+            return $http.get('/api/group/withoutDescendents/' + groupName)
                         .then(function(groups) {
                             return groups.data;
                         });

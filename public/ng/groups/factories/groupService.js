@@ -9,14 +9,14 @@ angular
         //Usual CRUD operations
         //---------------------------------------------------------------
 
-        function fetch(groupName) {
-            if(groupName) {
+        function fetch(isStockGroup, groupName) {
+            if(isStockGroup) {
                 return $http.get('/api/group/descendents/' + groupName)
                             .then(function(response) {
                                 return response.data;
                             });
             } else {
-                return $http.get('/api/group')
+                return $http.get('/api/group/withoutDescendents/' + groupName)
                             .then(function(response) {
                                 return response.data;
                             });                

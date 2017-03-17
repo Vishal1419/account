@@ -31,7 +31,7 @@
                                 uib-typeahead="group as group.name for group in groups | typeaheadFilter:{'name':$viewValue} | orderBy:smartOrder" 
                                 typeahead-template-url="group-template.html"
                                 required
-                                unique-record="{ url: '/api/group', reverse: true }"
+                                unique-record="{ url: '/api/group/withoutDescendents', reverse: true, selectedOnly: false, currentRecordName: 'Stock-in-Hand' }"
                                 match-to="{ matchString: ledger.name, unequal: true}"
                                 ng-required-err-type="requiredParentGroup"
                                 ng-uniqueRecord-err-type="noGroupFound"
@@ -140,7 +140,7 @@
                                         ng-disabled="isReadOnly" autocomplete="off" />
                             </div>
                             <div class="form-group">
-                                <label for="taxSalesTaxNumber" class="control-label">Address :</label>
+                                <label for="taxSalesTaxNumber" class="control-label">Sales Tax Number :</label>
                                 <input type="text" id="taxSalesTaxNumber" name="taxSalesTaxNumber" class="form-control form-input" ng-model="ledger.details.tax.salesTaxNumber"
                                         ng-disabled="isReadOnly" autocomplete="off" />
                             </div>

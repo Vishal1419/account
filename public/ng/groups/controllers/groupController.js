@@ -6,6 +6,12 @@ angular
 
         //When controller is refreshed, get necessary data back from service
 
+        if($route.current.originalPath == '/stockgroups' || $route.current.originalPath == '/stockgroup/create' || $route.current.originalPath == '/stockgroup/edit/:id' || $route.current.originalPath == '/stockgroup/view/:id') {
+            $scope.isStockGroup = true;
+        } else {
+            $scope.isStockGroup = false;
+        }
+
         if($route.current.originalPath == '/group/create' || $route.current.originalPath == '/stockgroup/create') {
             
             $scope.group = null;
@@ -73,17 +79,10 @@ angular
         }
 
         var reload = function() {
-            if($route.current.originalPath == '/stockgroups' || $route.current.originalPath == '/stockgroup/create' || $route.current.originalPath == '/stockgroup/edit/:id' || $route.current.originalPath == '/stockgroup/view/:id') {
-                groupService.fetch("Stock-in-Hand")
-                    .then(function(groups) {
-                        $scope.groups = groups;
-                    });
-            } else {
-                groupService.fetch()
-                    .then(function(groups) {
-                        $scope.groups = groups;
-                    });
-            }
+            groupService.fetch($scope.isStockGroup, "Stock-in-Hand")
+                .then(function(groups) {
+                    $scope.groups = groups;
+                });
         }
 
         reload();

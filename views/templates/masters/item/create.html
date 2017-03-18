@@ -1,0 +1,111 @@
+<div class="col-md-4 col-md-offset-4">
+    <div ng-controller="itemController">
+        <flash-message></flash-message>        
+        <div class="row">
+            <div class="col-md-1">
+                <button type="button" class="btn btn-primary btn-list btn-list-fix" ng-click="listItems()"></button>
+            </div>
+        </div>
+        <div class="row">
+            <form name="itemForm" ng-submit="submit(item)" novalidate>
+                <div class="form-group">
+                    <label for="name" class="control-label">Name</label>
+                    <input type="text" id="name" name="name" class="form-control form-input" ng-model="item.name"
+                            ng-disabled="isReadOnly" autocomplete="off"
+                            required 
+                            unique-record="{ url: '/api/item', currentRecordName: currentItemName }"
+                            ng-required-err-type="requiredItem"
+                            ng-uniqueRecord-err-type="uniqueItem" />
+                </div>
+                <div class="form-group">
+                    <label for="alias" class="control-label">Alias</label>
+                    <input type="text" id="alias" name="alias" class="form-control form-input" ng-model="item.alias"
+                            ng-disabled="isReadOnly" autocomplete="off" />
+                </div>
+                <div class="form-group">
+                    <label for="parent" class="control-label">Stock Group</label>
+                    <input type="text" id="parent" name="parent" class="form-control form-input" ng-model="item.parent"
+                            ng-disabled="isReadOnly" autocomplete="off" 
+                            typeahead-min-length="0" 
+                            uib-typeahead="group as group.name for group in groups | typeaheadFilter:{'name':$viewValue} | orderBy:smartOrder" 
+                            typeahead-template-url="group-template.html"
+                            required
+                            unique-record="{ url: '/api/group/fakecutoff', reverse: true, selectedOnly: true, optionalPart: '/descendents', currentRecordName: 'Stock-in-Hand' }"
+                            match-to="{ matchString: item.name, unequal: true}"
+                            ng-required-err-type="requiredStockGroup"
+                            ng-uniqueRecord-err-type="noStockGroupFound"
+                            ng-matchTo-err-type="unMatchNameAndStockGroup" />
+                </div>
+                <div class="form-group">
+                    <label for="unit" class="control-label">Unit</label>
+                    <input type="text" id="unit" name="unit" class="form-control form-input" ng-model="item.unit"
+                            ng-disabled="isReadOnly" autocomplete="off" 
+                            typeahead-min-length="0" 
+                            uib-typeahead="unit as unit.symbol for unit in units | typeaheadFilter:{'symbol':$viewValue} | orderBy:smartOrder" 
+                            typeahead-template-url="unit-template.html"
+                            unique-record="{ url: '/api/unit', optionalPart: '/symbol', propertyName: 'symbol', reverse: true }"
+                            ng-uniqueRecord-err-type="noUnitFound" />
+                </div>
+                <div class="form-group">
+                    <label for="taxrate" class="control-label">Rate of Duty</label>
+                    <input type="text" id="taxrate" name="taxrate" class="form-control form-input" ng-model="item.tax.rate"
+                            ng-disabled="isReadOnly" autocomplete="off" /> %
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">Opening Balance</div>
+                    <div class="panel-body">
+                        <div class="col-md-12">
+                            <div class="form-group col-md-3">
+                                <label for="openingQuantity" class="control-label">Quantity</label>
+                                <input type="text" id="openingQuantity" name="openingQuantity" class="form-control form-input" ng-model="item.openingBalance.quantity"
+                                        ng-disabled="isReadOnly" autocomplete="off" />
+                            </div>
+                            <div class="col-md-1">
+                                x
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="openingRate" class="control-label">Rate</label>
+                                <input type="text" id="openingRate" name="openingRate" class="form-control form-input" ng-model="item.openingBalance.rate"
+                                        ng-disabled="isReadOnly" autocomplete="off" />
+                            </div>
+                            <div class="col-md-1">
+                                =
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="openingAmount" class="control-label">Amount</label>
+                                <input type="text" id="openingAmount" name="openingAmount" class="form-control form-input" ng-model="item.openingBalance.amount"
+                                        ng-disabled="isReadOnly" autocomplete="off" />
+                            </div>                    
+                        </div>                        
+                    </div>    
+                </div>
+                
+                <div class="row">
+                    <div class="form-group form-controls">
+                        <button id="submit" type="submit" class="btn btn-success btn-input submit" ng-hide="isReadOnly">Save</button>
+                        <button id="clear" type="reset" class="btn btn-input clear" ng-class="isReadOnly ? 'btn-primary' : 'btn-danger'" ng-click="clear()" ng-init="Clear">{{clearButtonText}}</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/ng-template" id="group-template.html">
+    <a tabindex="-1">
+        <div class="row">
+            <span class="col-md-6 col-sm-6" ng-bind-html="match.model.name | uibTypeaheadHighlight:query"></span>
+            <span class="col-md-5 col-sm-5 col-md-offset-1 col-sm-offset-1" ng-bind-html="match.model.effect.name  | uibTypeaheadHighlight:query"></span>
+        </div>
+    </a>
+</script>
+
+<script type="text/ng-template" id="unit-template.html">
+    <a tabindex="-1">
+        <div class="row">
+            <span class="col-md-6 col-sm-6" ng-bind-html="match.model.symbol | uibTypeaheadHighlight:query"></span>
+            <span class="col-md-5 col-sm-5 col-md-offset-1 col-sm-offset-1" ng-bind-html="match.model.name  | uibTypeaheadHighlight:query"></span>
+        </div>
+    </a>
+</script>

@@ -1,4 +1,4 @@
-angular.module('accountApp', ['ngRoute', 'effectApp', 'natureApp', 'groupApp', 'countryApp', 'stateApp', 'creditDebitApp', 'ledgerApp', 'unitApp']);
+angular.module('accountApp', ['ngRoute', 'effectApp', 'natureApp', 'groupApp', 'countryApp', 'stateApp', 'creditDebitApp', 'ledgerApp', 'unitApp', 'itemApp']);
 
 angular.module('effectApp', ['ngRoute', 'jcs-autoValidate', 'ngFlash', 'LocalStorageModule'])
        .run(function(defaultErrorMessageResolver) {
@@ -105,4 +105,18 @@ angular.module('unitApp', ['ngRoute', 'jcs-autoValidate', 'ngFlash', 'LocalStora
        })
        .config(function (localStorageServiceProvider) {
           localStorageServiceProvider.setPrefix('lsUnit').setStorageCookieDomain('');
+       });
+
+angular.module('itemApp', ['ngRoute', 'jcs-autoValidate', 'ngFlash', 'LocalStorageModule', 'ui.bootstrap'])
+       .run(function(defaultErrorMessageResolver) {
+           defaultErrorMessageResolver.getErrorMessages().then(function(errorMessages) {
+                errorMessages['uniqueItem'] = "Item name already exists.";
+                errorMessages['requiredItem'] = "Item name is required";
+                errorMessages['noStockGroupFound'] = "Choose stock group from list";
+                errorMessages['requiredStockGroup'] = "Stock group is required";
+                errorMessages['noUnitFound'] = "Choose unit from list";
+           });
+       })
+       .config(function (localStorageServiceProvider) {
+          localStorageServiceProvider.setPrefix('lsItem').setStorageCookieDomain('');
        });

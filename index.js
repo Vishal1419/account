@@ -19,6 +19,7 @@ var state = require('./api/landDivision/state');
 var creditDebit = require('./api/general/creditDebit');
 var ledger = require('./api/masters/ledger/ledger');
 var unit = require('./api/masters/unit/unit');
+var item = require('./api/masters/item/item');
 
 var app = express();
 
@@ -123,6 +124,7 @@ app.use('/api/state', state);
 app.use('/api/creditDebit', creditDebit);
 app.use('/api/ledger', ledger);
 app.use('/api/unit', unit);
+app.use('/api/item', item);
 
 app.get('*', function(req, res) {
     res.render('index.html.ejs');

@@ -7,6 +7,8 @@ angular
 
                 ctrl.$asyncValidators.uniqueRecord = function(modelValue, viewValue) {
 
+                    var attributes = scope.$eval(attrs.uniqueRecord);
+
                     var value = modelValue || viewValue;
 
                     if(value == undefined || value == '') {
@@ -15,11 +17,11 @@ angular
                         });
                     } else if (typeof value === 'string' || value instanceof String) {
                         value = encodeURL(value);
+                    } else if (!(attributes.propertyName == undefined)) {
+                        value = encodeURL(value[attributes.propertyName]);
                     } else {
                         value = encodeURL(value.name);
                     }
-
-                    var attributes = scope.$eval(attrs.uniqueRecord);
 
                     if(attributes.selectedOnly == undefined) {
                         attributes.selectedOnly = false;

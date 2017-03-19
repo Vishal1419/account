@@ -1,6 +1,6 @@
 angular
     .module('stateApp')
-    .controller("stateController", function(Flash, $scope, $http, $location, $route, stateService, localStorageService) {
+    .controller("stateController", function(Flash, $scope, $http, $location, $route, stateService, typeaheadService, localStorageService) {
 
         var ls = localStorageService;
 
@@ -151,6 +151,20 @@ angular
             });
             reload();
         }
+
+        //this function is used for sorting items while searching in typeahead based on 
+        //the position and alphabetical order.
+        $scope.smartOrder = function(obj) {
+            var queryObj = typeaheadService.getQueryObject(),
+                key = Object.keys(queryObj)[0],
+                query = queryObj[key];
+            if (query !== undefined) {
+                if (obj[key].toLowerCase().indexOf(query.toLowerCase()) === 0) {
+                    return ('a' + obj[key]);
+                }
+            }
+            return ('b' + obj[key]);
+        };
 
         //For sorting data
 

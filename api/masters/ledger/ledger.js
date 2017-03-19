@@ -60,7 +60,7 @@ router.post('/', function(req, res){
   
         Group.getGroupByName("Stock-in-Hand", function(err, groupStockInHand) {
 
-            Group.getGroupsOtherThanSelectedGroupAndItsDescendents(groupStockInHand._id, 100).then(function(groups) {
+            Group.getGroupsOtherThanSelectedGroupAndItsDescendents(groupStockInHand[0]._id, 100).then(function(groups) {
 
                 State.getAllStates(function(err, states) {
 
@@ -185,7 +185,7 @@ router.put('/:id', function(req, res, next) {
 
     Group.getGroupByName("Stock-in-Hand", function(err, groupStockInHand) {
 
-        Group.getGroupsOtherThanSelectedGroupAndItsDescendents(groupStockInHand._id, 100).then(function(groups) {
+        Group.getGroupsOtherThanSelectedGroupAndItsDescendents(groupStockInHand[0]._id, 100).then(function(groups) {
 
             Ledger.getAllLedgers(function(err, ledgers) {
 

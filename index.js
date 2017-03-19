@@ -76,6 +76,7 @@ app.use(expressValidator({
         },
         noRecordFound: function(input, propertyName, collection) {
             //Use this method when creating new record
+
             var recordFound = false;
             collection.forEach(function(element) {
                 if (cs(element[propertyName], input, true, false)) {

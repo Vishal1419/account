@@ -3,7 +3,6 @@ angular
     .controller("groupController", function(Flash, $scope, $http, $location, $route, groupService, localStorageService) {
 
         var ls = localStorageService;
-
         //When controller is refreshed, get necessary data back from service
 
         if($route.current.originalPath == '/stockgroups' || $route.current.originalPath == '/stockgroup/create' || $route.current.originalPath == '/stockgroup/edit/:id' || $route.current.originalPath == '/stockgroup/view/:id') {
@@ -134,11 +133,11 @@ angular
                 if($route.current.originalPath == '/stockgroups') {
                     $location.path('/stockgroup/view/' + group._id);
                 } else {
-                    $location.path('/stockgroup/view/' + group._id);
+                    $location.path('/group/view/' + group._id);
                 }
             } else {
-                if($route.current.originalPath == '/groups') {
-                    $location.path('/group/edit/' + group._id);
+                if($route.current.originalPath == '/stockgroups') {
+                    $location.path('/stockgroup/edit/' + group._id);
                 } else {
                     $location.path('/group/edit/' + group._id);
                 }
@@ -148,7 +147,7 @@ angular
 
         $scope.submit = function(group) {
             
-            groupService.save(group, function(response) {
+            groupService.save(group, $scope.isStockGroup, function(response) {
 
                 if(response.status == 400) {
                     Flash.create('danger', response.data.errors[0].msg);

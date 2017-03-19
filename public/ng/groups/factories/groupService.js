@@ -42,9 +42,9 @@ angular
                         });
         }
 
-        function save(group, callback) {
+        function save(group, isStockGroup, callback) {
             if(group == undefined || group._id == undefined || group._id == '') {
-                $http.post('/api/group', group)
+                $http.post('/api/group/' + isStockGroup, group)
                      .then(function (response) {
                          //Clear errors
                          callback(response);
@@ -53,7 +53,7 @@ angular
                          callback(response);
                      });
             } else {
-                $http.put('/api/group/' + group._id, group).then(function (response) {
+                $http.put('/api/group/' + group._id + '/' + isStockGroup, group).then(function (response) {
                          //Clear errors
                          callback(response);
                      }, function(response) {

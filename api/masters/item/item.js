@@ -76,7 +76,7 @@ router.post('/', function(req, res){
   
         Group.getGroupByName("Stock-in-Hand", function(err, group) {
 
-            Group.getDescendentsOfSelectedGroupWithItself(group._id, 100).then(function(groups) {
+            Group.getDescendentsOfSelectedGroupWithItself(group[0]._id, 100).then(function(groups) {
 
                 Unit.getAllUnits(function(err, units) {
 
@@ -169,7 +169,7 @@ router.put('/:id', function(req, res, next) {
 
         Group.getGroupByName("Stock-in-Hand", function(err, group) {
 
-            Group.getDescendentsOfSelectedGroupWithItself(group._id, 100).then(function(groups) {
+            Group.getDescendentsOfSelectedGroupWithItself(group[0]._id, 100).then(function(groups) {
 
                 Item.getAllItems(function(err, items) {
 

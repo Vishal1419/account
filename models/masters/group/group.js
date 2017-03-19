@@ -30,7 +30,7 @@ module.exports.getAllGroups = function(callback){
 
 module.exports.getDescendentsOfSelectedGroupWithItself = wrap(function*(topGroupId, generations) {
   
-  const topGroup = yield Group.find({parent: topGroupId}).populate('parent').populate('effect').populate('nature');
+  const topGroup = yield Group.find({_id: topGroupId}).populate('parent').populate('effect').populate('nature');
   
   let groups = [];
   let ids = [topGroupId];

@@ -31,18 +31,21 @@ router.get('/otherThanSelectedGroupAndItsDescendents/:name', function(req, res, 
 
 });
 
-router.get('/descendents/:name', function(req, res, next) {
+router.get('/selectedGroupAndItsDescendents/:name', function(req, res, next) {
 
     var groupName = req.params.name;
 
     Group.getGroupByName(groupName, function(err, group) {
         if(err) { res.status(400).json(err); }
         else {
-            var groupId = group[0]._id;
-            Group.getDescendentsOfSelectedGroupWithItself(groupId, 100).then( function(groups) {
-                    res.status(200).json(groups);
-                }
-            );
+            if(group[0] == undefined) { return res.status(404).json(group); }
+            else {
+                var groupId = group[0]._id;
+                Group.getDescendentsOfSelectedGroupWithItself(groupId, 100).then( function(groups) {
+                        res.status(200).json(groups);
+                    }
+                );
+            }
         }
     });
 
@@ -99,7 +102,7 @@ router.get('/otherThanSelectedGroupAndItsDescendents/:name/:currentGroupName', f
     });
 });
 
-router.get('/descendents/:name/:currentGroupName', function(req, res, next){
+router.get('/selectedGroupAndItsDescendents/:name/:currentGroupName', function(req, res, next){
 
     var groupName = req.params.name;
     var currentGroupName = req.params.currentGroupName;
@@ -119,7 +122,33 @@ router.get('/descendents/:name/:currentGroupName', function(req, res, next){
 
 });
 
-router.post('/', function(req, res){
+router.post('/:isStockGroup', function(req, res){
+
+    var isStockGroup = req.params.isStockGroup;
+
+    Group.getGroupByName("Stock-in-Hand", function(err, stockInHandGroup) {
+
+        groupId = stockInHandGroup[0]._id;
+
+        if(eval(isStockGroup)) {
+
+            Group.getDescendentsOfSelectedGroupWithItself(groupId, 100).then(function(selectedGroups) {
+                createGroup(req, res, selectedGroups);
+            });
+
+        } else {
+
+            Group.getGroupsOtherThanSelectedGroupAndItsDescendents(groupId, 100).then(function(selectedGroups) {
+                createGroup(req, res, selectedGroups);
+            });
+
+        }
+
+    });
+
+});
+
+function createGroup(req, res, selectedGroups) {
 
     var name = req.body.name;
     var alias = req.body.alias;
@@ -127,74 +156,88 @@ router.post('/', function(req, res){
 
     Group.getAllGroups(function(err, groups) {
   
-      Group.getGroupByName("Stock-in-Hand", function(err, stockInHandGroup) {
+    if (err) {
+        res.status(400).json(err);
+    } 
 
-            groupId = stockInHandGroup[0]._id;
+    req.checkBody('name', 'Group name is required.').notEmpty();
+    req.checkBody('name', 'Duplicate group Name.').duplicateRecord('name', groups);
 
-            Group.getGroupsOtherThanSelectedGroupAndItsDescendents(groupId, 100).then(function(selectedGroups) {
+    if(parent.name == undefined) {
+        req.checkBody('parent', 'Parent name is required.').notEmpty();
+        req.checkBody('parent', 'Parent Name and group name should be different.').checkEquality(name, false);
+        req.checkBody('parent', 'Please select parent group from list.').noRecordFound('name', selectedGroups);            
+    } else {
+        req.checkBody('parent.name', 'Parent name is required.').notEmpty();
+        req.checkBody('parent.name', 'Parent Name and group name should be different.').checkEquality(name, false);
+        req.checkBody('parent.name', 'Please select parent group from list.').noRecordFound('name', selectedGroups);
+        parent = parent.name;
+    }
 
-                if (err) {
-                    res.status(400).json(err);
-                } 
+    //Check for errors
+    var errors = req.validationErrors();
 
-                req.checkBody('name', 'Group name is required.').notEmpty();
-                req.checkBody('name', 'Duplicate group Name.').duplicateRecord('name', groups);
+    if(errors){
+        res.status(400).json({errors: errors});
+    } else {
 
-                if(parent.name == undefined) {
-                    req.checkBody('parent', 'Parent name is required.').notEmpty();
-                    req.checkBody('parent', 'Parent Name and group name should be different.').checkEquality(name, false);
-                    req.checkBody('parent', 'Please select parent group from list.').noRecordFound('name', selectedGroups);            
-                } else {
-                    req.checkBody('parent.name', 'Parent name is required.').notEmpty();
-                    req.checkBody('parent.name', 'Parent Name and group name should be different.').checkEquality(name, false);
-                    req.checkBody('parent.name', 'Please select parent group from list.').noRecordFound('name', selectedGroups);
-                    parent = parent.name;
+        Group.getGroupByName(parent, function(err, parentGroup) {
+
+            var newGroup = new Group({
+                name: name,
+                alias: alias,
+                parent: parentGroup[0],
+                effect: parentGroup[0].effect,
+                nature: parentGroup[0].nature,
+                isSystemGroup: false,
+                details: {
+                    mailing: parentGroup[0].details.mailing,
+                    contact: parentGroup[0].details.contact,
+                    bank: parentGroup[0].details.bank,
+                    tax: parentGroup[0].details.tax
                 }
+            });
 
-                //Check for errors
-                var errors = req.validationErrors();
+            Group.createGroup(newGroup, function(err, result){
 
-                if(errors){
-                    res.status(400).json({errors: errors});
-                } else {
-
-                    Group.getGroupByName(parent, function(err, parentGroup) {
-
-                        var newGroup = new Group({
-                            name: name,
-                            alias: alias,
-                            parent: parentGroup[0],
-                            effect: parentGroup[0].effect,
-                            nature: parentGroup[0].nature,
-                            isSystemGroup: false,
-                            details: {
-                                mailing: parentGroup[0].details.mailing,
-                                contact: parentGroup[0].details.contact,
-                                bank: parentGroup[0].details.bank,
-                                tax: parentGroup[0].details.tax
-                            }
-                        });
-
-                        Group.createGroup(newGroup, function(err, result){
-
-                            if(err) { throw(err); }
-                            else { res.status(200).json({success: {msg: 'Group ' + name + ' saved successfully'}}); }
-
-                        });
-
-                    });
-
-                }
+                if(err) { throw(err); }
+                else { res.status(200).json({success: {msg: 'Group ' + name + ' saved successfully'}}); }
 
             });
 
         });
 
+    }
+
+});
+
+}
+
+router.put('/:id/:isStockGroup', function(req, res, next) {
+
+    var isStockGroup = req.params.isStockGroup;
+
+    Group.getGroupByName("Stock-in-Hand", function(err, groupStockInHand) {
+
+        if(eval(isStockGroup)) {
+
+            Group.getDescendentsOfSelectedGroupWithItself(groupStockInHand[0]._id, 100).then(function(selectedGroups) {
+                updateGroup(req, res, selectedGroups);
+            });            
+
+        } else {
+
+            Group.getGroupsOtherThanSelectedGroupAndItsDescendents(groupStockInHand[0]._id, 100).then(function(selectedGroups) {
+                updateGroup(req, res, selectedGroups);
+            });
+
+        }
+
     });
 
 });
 
-router.put('/:id', function(req, res, next) {
+function updateGroup(req, res, selectedGroups ) {
 
     var id = req.params.id;
     var name = req.body.name;
@@ -202,79 +245,69 @@ router.put('/:id', function(req, res, next) {
     var parent = req.body.parent;
     var isSystemGroup = req.body.isSystemGroup;
 
-    //Here parent is actually parent.name
-
     Group.getAllGroups(function(err, groups) {
 
         Group.getGroupById(id, function(err, originalGroup) {
+    
+            if (err) {
+                res.status(400).json(err);
+            } 
 
-            Group.getGroupByName("Stock-in-Hand", function(err, groupStockInHand) {
+            req.checkBody('name', 'Group name is required.').notEmpty();
+            req.checkBody('name', 'Duplicate group Name.').duplicateRecordExcludingCurrentRecord('name', groups, originalGroup[0].name);
 
-                Group.getGroupsOtherThanSelectedGroupAndItsDescendents(groupStockInHand._id, 100).then(function(selectedGroups) {
+            if(parent.name == undefined) {
+                req.checkBody('parent', 'Parent name is required.').notEmpty();
+                req.checkBody('parent', 'Parent Name and group name should be different.').checkEquality(name, false);
+                req.checkBody('parent', 'Please select parent group from list.').noRecordFound('name', selectedGroups);            
+            } else {
+                req.checkBody('parent.name', 'Parent name is required.').notEmpty();
+                req.checkBody('parent.name', 'Parent Name and group name should be different.').checkEquality(name, false);
+                req.checkBody('parent.name', 'Please select parent group from list.').noRecordFound('name', selectedGroups);
+                parent = parent.name;
+            }
 
-                    if (err) {
-                        res.status(400).json(err);
-                    } 
+            //Check for errors
+            var errors = req.validationErrors();
 
-                    req.checkBody('name', 'Group name is required.').notEmpty();
-                    req.checkBody('name', 'Duplicate group Name.').duplicateRecordExcludingCurrentRecord('name', groups, originalGroup[0].name);
+            if(errors) {
+                res.status(400).json({errors: errors});
+            } else {
 
-                    if(parent.name == undefined) {
-                        req.checkBody('parent', 'Parent name is required.').notEmpty();
-                        req.checkBody('parent', 'Parent Name and group name should be different.').checkEquality(name, false);
-                        req.checkBody('parent', 'Please select parent group from list.').noRecordFound('name', selectedGroups);            
-                    } else {
-                        req.checkBody('parent.name', 'Parent name is required.').notEmpty();
-                        req.checkBody('parent.name', 'Parent Name and group name should be different.').checkEquality(name, false);
-                        req.checkBody('parent.name', 'Please select parent group from list.').noRecordFound('name', selectedGroups);
-                        parent = parent.name;
-                    }
+                Group.getGroupByName(parent, function(err, parentGroup) {
 
-                    //Check for errors
-                    var errors = req.validationErrors();
+                    var newGroup = new Group({
+                        _id: id,
+                        name: name,
+                        alias: alias,
+                        parent: parentGroup[0],
+                        effect: parentGroup[0].effect,
+                        nature: parentGroup[0].nature,
+                        isSystemGroup: isSystemGroup,
+                        details: {
+                            mailing: parentGroup[0].details.mailing,
+                            contact: parentGroup[0].details.contact,
+                            bank: parentGroup[0].details.bank,
+                            tax: parentGroup[0].details.tax
+                        }
+                    });
 
-                    if(errors) {
-                        res.status(400).json({errors: errors});
-                    } else {
+                    Group.updateGroup(newGroup, function(err, result){
 
-                        Group.getGroupByName(parent, function(err, parentGroup) {
+                        if(err) { throw(err); }
+                        else { res.status(200).json({success: {msg: 'Group ' + name + ' updated successfully'}}); }
 
-                            var newGroup = new Group({
-                                _id: id,
-                                name: name,
-                                alias: alias,
-                                parent: parentGroup[0],
-                                effect: parentGroup[0].effect,
-                                nature: parentGroup[0].nature,
-                                isSystemGroup: isSystemGroup,
-                                details: {
-                                    mailing: parentGroup[0].details.mailing,
-                                    contact: parentGroup[0].details.contact,
-                                    bank: parentGroup[0].details.bank,
-                                    tax: parentGroup[0].details.tax
-                                }
-                            });
-
-                            Group.updateGroup(newGroup, function(err, result){
-
-                                if(err) { throw(err); }
-                                else { res.status(200).json({success: {msg: 'Group ' + name + ' updated successfully'}}); }
-
-                            });
-
-                        });
-
-                    }
+                    });
 
                 });
-        
-            });
-    
+
+            }
+
         });
 
     });
 
-});
+}
 
 router.delete('/:id/:name', function(req, res, next) {
 

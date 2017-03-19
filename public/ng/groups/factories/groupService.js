@@ -11,7 +11,7 @@ angular
 
         function fetch(isStockGroup, groupName) {
             if(isStockGroup) {
-                return $http.get('/api/group/descendents/' + groupName)
+                return $http.get('/api/group/selectedGroupAndItsDescendents/' + groupName)
                             .then(function(response) {
                                 return response.data;
                             });
@@ -31,7 +31,7 @@ angular
         }
 
         function getStockGroupById(groupName, id) {
-            return $http.get('/api/group/descendents/' + groupName)
+            return $http.get('/api/group/selectedGroupAndItsDescendents/' + groupName)
                         .then(function(groups) {
                             groups.forEach(function(group) {
                                 if(group._id == id) {

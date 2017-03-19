@@ -30,7 +30,7 @@
                             uib-typeahead="group as group.name for group in groups | typeaheadFilter:{'name':$viewValue} | orderBy:smartOrder" 
                             typeahead-template-url="group-template.html"
                             required
-                            unique-record="{ url: '/api/group/fakecutoff', reverse: true, selectedOnly: true, optionalPart: '/descendents', currentRecordName: 'Stock-in-Hand' }"
+                            unique-record="{ url: '/api/group/fakecutoff', reverse: true, selectedOnly: true, optionalPart: '/selectedGroupAndItsDescendents', currentRecordName: 'Stock-in-Hand' }"
                             match-to="{ matchString: item.name, unequal: true}"
                             ng-required-err-type="requiredStockGroup"
                             ng-uniqueRecord-err-type="noStockGroupFound"

@@ -17,7 +17,7 @@ angular
         }
 
         function fetchStockGroups(groupName) {
-            return $http.get('/api/group/descendents/' + groupName)
+            return $http.get('/api/group/selectedGroupAndItsDescendents/' + groupName)
                         .then(function(groups) {
                             return groups.data;
                         });

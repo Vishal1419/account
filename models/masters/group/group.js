@@ -28,7 +28,7 @@ module.exports.getAllGroups = function(callback){
   });
 };
 
-module.exports.getDescendentsOfSelectedGroup = wrap(function*(topGroupId, generations) {
+module.exports.getDescendentsOfSelectedGroupWithItself = wrap(function*(topGroupId, generations) {
   
   const topGroup = yield Group.find({parent: topGroupId}).populate('parent').populate('effect').populate('nature');
   
@@ -41,7 +41,32 @@ module.exports.getDescendentsOfSelectedGroup = wrap(function*(topGroupId, genera
     groups = groups.concat(thisLevelGroups);
   }
 
+  groups.push(topGroup[0]);
+
   return groups;
+
+});
+
+module.exports.getGroupsOtherThanSelectedGroupAndItsDescendents = wrap(function*(topGroupId, generations) {
+  
+  const topGroup = yield Group.find({_id: topGroupId}).populate('parent').populate('effect').populate('nature');
+  
+  console.log(topGroup);
+
+  let groups = [];
+  let ids = [topGroupId];
+
+  for(let i = 0; i < generations; i++) {
+    const thisLevelGroups = yield Group.find({ parent : { $in : ids } }).populate('parent').populate('effect').populate('nature');
+    ids = thisLevelGroups.map(group => group._id);
+    groups = groups.concat(thisLevelGroups);
+  }
+
+  groups.push(topGroup[0]);
+
+  var allGroups = yield Group.find().populate('parent').populate('effect').populate('nature');
+
+  return allGroups.filter(thisGroup => !groups.some(group => thisGroup.name === group.name));
 
 });
 

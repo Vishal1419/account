@@ -17,7 +17,7 @@ angular
         }
 
         function fetchGroups(groupName) {
-            return $http.get('/api/group/withoutDescendents/' + groupName)
+            return $http.get('/api/group/otherThanSelectedGroupAndItsDescendents/' + groupName)
                         .then(function(groups) {
                             return groups.data;
                         });

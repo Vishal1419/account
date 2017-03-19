@@ -58,96 +58,100 @@ router.post('/', function(req, res){
 
     Ledger.getAllLedgers(function(err, ledgers) {
   
-        Group.getAllGroups(function(err, groups) {
+        Group.getGroupByName("Stock-in-Hand", function(err, groupStockInHand) {
 
-            State.getAllStates(function(err, states) {
+            Group.getGroupsOtherThanSelectedGroupAndItsDescendents(groupStockInHand._id, 100).then(function(groups) {
 
-                CreditDebit.getAllCreditDebits(function(err, creditDebits) {
+                State.getAllStates(function(err, states) {
 
-                    if (err) {
-                        res.status(400).json(err);
-                    } 
+                    CreditDebit.getAllCreditDebits(function(err, creditDebits) {
 
-                    req.checkBody('name', 'Ledger name is required.').notEmpty();
-                    req.checkBody('name', 'Duplicate ledger Name.').duplicateRecord('name', ledgers);
+                        if (err) {
+                            res.status(400).json(err);
+                        } 
 
-                    if(parent.name == undefined) {
-                        req.checkBody('parent', 'Parent name is required.').notEmpty();
-                        req.checkBody('parent', 'Parent Name and ledger name should be different.').checkEquality(name, false);
-                        req.checkBody('parent', 'Please select parent group from list.').noRecordFound('name', groups);            
-                    } else {
-                        req.checkBody('parent.name', 'Parent name is required.').notEmpty();
-                        req.checkBody('parent.name', 'Parent Name and ledger name should be different.').checkEquality(name, false);
-                        req.checkBody('parent.name', 'Please select parent group from list.').noRecordFound('name', groups);
-                        parent = parent.name;
-                    }
+                        req.checkBody('name', 'Ledger name is required.').notEmpty();
+                        req.checkBody('name', 'Duplicate ledger Name.').duplicateRecord('name', ledgers);
 
-                    if(!(state == undefined || state.name == undefined || state.name == null || state.name == '')) {
-                        req.checkBody('details.mailing.state.name', 'Please select state from list.').noRecordFound('name', states);
-                        state = state.name;
-                    } else {
-                        state = undefined;
-                    }
+                        if(parent.name == undefined) {
+                            req.checkBody('parent', 'Parent name is required.').notEmpty();
+                            req.checkBody('parent', 'Parent Name and ledger name should be different.').checkEquality(name, false);
+                            req.checkBody('parent', 'Please select parent group from list.').noRecordFound('name', groups);            
+                        } else {
+                            req.checkBody('parent.name', 'Parent name is required.').notEmpty();
+                            req.checkBody('parent.name', 'Parent Name and ledger name should be different.').checkEquality(name, false);
+                            req.checkBody('parent.name', 'Please select parent group from list.').noRecordFound('name', groups);
+                            parent = parent.name;
+                        }
 
-                    if(!(req.body.openingBalance == undefined || creditDebit == undefined || creditDebit.code == undefined || creditDebit.code == null || creditDebit == '')) {
-                        req.checkBody('openingBalance.creditOrDebit.code', 'Please select Credit or Debit from list.').noRecordFound('code', creditDebits);
-                        creditDebit = creditDebit.code;
-                    } else {
-                        creditDebit = undefined;
-                    }
+                        if(!(state == undefined || state.name == undefined || state.name == null || state.name == '')) {
+                            req.checkBody('details.mailing.state.name', 'Please select state from list.').noRecordFound('name', states);
+                            state = state.name;
+                        } else {
+                            state = undefined;
+                        }
 
-                    //Check for errors
-                    var errors = req.validationErrors();
+                        if(!(req.body.openingBalance == undefined || creditDebit == undefined || creditDebit.code == undefined || creditDebit.code == null || creditDebit == '')) {
+                            req.checkBody('openingBalance.creditOrDebit.code', 'Please select Credit or Debit from list.').noRecordFound('code', creditDebits);
+                            creditDebit = creditDebit.code;
+                        } else {
+                            creditDebit = undefined;
+                        }
 
-                    if(errors){
-                        res.status(400).json({errors: errors});
-                    } else {
+                        //Check for errors
+                        var errors = req.validationErrors();
 
-                        Group.getGroupByName(parent, function(err, parentGroup) {
+                        if(errors){
+                            res.status(400).json({errors: errors});
+                        } else {
 
-                            State.getStateByName(state == undefined ? '' : state, function(err, selectedState) {
+                            Group.getGroupByName(parent, function(err, parentGroup) {
 
-                                CreditDebit.getCreditDebitByCode(creditDebit == undefined ? 'Cr' : creditDebit, function(err, selectedCreditDebit) {
+                                State.getStateByName(state == undefined ? '' : state, function(err, selectedState) {
 
-                                    var newLedger = new Ledger({
-                                        name: name,
-                                        alias: alias,
-                                        parent: parentGroup[0],
-                                        isSystemLedger: false,
-                                        details: (req.body.details == undefined) ? undefined : {
-                                            mailing: (req.body.details.mailing == undefined) ? undefined : { 
-                                                name: req.body.details.mailing.name,
-                                                address: req.body.details.mailing.address,
-                                                state: selectedState[0] || state,
-                                                pincode: req.body.details.mailing.pincode, 
+                                    CreditDebit.getCreditDebitByCode(creditDebit == undefined ? 'Cr' : creditDebit, function(err, selectedCreditDebit) {
+
+                                        var newLedger = new Ledger({
+                                            name: name,
+                                            alias: alias,
+                                            parent: parentGroup[0],
+                                            isSystemLedger: false,
+                                            details: (req.body.details == undefined) ? undefined : {
+                                                mailing: (req.body.details.mailing == undefined) ? undefined : { 
+                                                    name: req.body.details.mailing.name,
+                                                    address: req.body.details.mailing.address,
+                                                    state: selectedState[0] || state,
+                                                    pincode: req.body.details.mailing.pincode, 
+                                                },
+                                                contact: (req.body.details.contact == undefined) ? undefined : {
+                                                    contactPerson: req.body.details.contact.contactPerson,
+                                                    mobile1: req.body.details.contact.mobile1,
+                                                    mobile2: req.body.details.contact.mobile2,
+                                                    email: req.body.details.contact.email
+                                                },
+                                                bank: (req.body.details.bank == undefined) ? undefined : {
+                                                    accountNumber: req.body.details.bank.accountNumber,
+                                                    branchName: req.body.details.bank.branchName,
+                                                    bsrCode: req.body.details.bank.bsrCode
+                                                },
+                                                tax: (req.body.details.tax == undefined) ? undefined : {
+                                                    panOrItNumber: req.body.details.tax.panOrItNumber,
+                                                    salesTaxNumber: req.body.details.tax.salesTaxNumber
+                                                }
                                             },
-                                            contact: (req.body.details.contact == undefined) ? undefined : {
-                                                contactPerson: req.body.details.contact.contactPerson,
-                                                mobile1: req.body.details.contact.mobile1,
-                                                mobile2: req.body.details.contact.mobile2,
-                                                email: req.body.details.contact.email
-                                            },
-                                            bank: (req.body.details.bank == undefined) ? undefined : {
-                                                accountNumber: req.body.details.bank.accountNumber,
-                                                branchName: req.body.details.bank.branchName,
-                                                bsrCode: req.body.details.bank.bsrCode
-                                            },
-                                            tax: (req.body.details.tax == undefined) ? undefined : {
-                                                panOrItNumber: req.body.details.tax.panOrItNumber,
-                                                salesTaxNumber: req.body.details.tax.salesTaxNumber
+                                            openingBalance: {
+                                                amount: (req.body.openingBalance == undefined || req.body.openingBalance.amount == undefined) ? 0 : req.body.openingBalance.amount,
+                                                creditOrDebit: selectedCreditDebit[0]
                                             }
-                                        },
-                                        openingBalance: {
-                                            amount: (req.body.openingBalance == undefined || req.body.openingBalance.amount == undefined) ? 0 : req.body.openingBalance.amount,
-                                            creditOrDebit: selectedCreditDebit[0]
-                                        }
 
-                                    });
+                                        });
 
-                                    Ledger.createLedger(newLedger, function(err, result){
+                                        Ledger.createLedger(newLedger, function(err, result){
 
-                                        if(err) { throw(err); }
-                                        else { res.status(200).json({success: {msg: 'Ledger ' + name + ' saved successfully'}}); }
+                                            if(err) { throw(err); }
+                                            else { res.status(200).json({success: {msg: 'Ledger ' + name + ' saved successfully'}}); }
+
+                                        });
 
                                     });
 
@@ -155,9 +159,9 @@ router.post('/', function(req, res){
 
                             });
 
-                        });
+                        }
 
-                    }
+                    });
 
                 });
 
@@ -179,104 +183,108 @@ router.put('/:id', function(req, res, next) {
     var creditDebit = (req.body.openingBalance == undefined) ? undefined : req.body.openingBalance.creditOrDebit;
     var isSystemLedger = req.body.isSystemLedger;
 
-    Group.getAllGroups(function(err, groups) {
+    Group.getGroupByName("Stock-in-Hand", function(err, groupStockInHand) {
 
-        Ledger.getAllLedgers(function(err, ledgers) {
+        Group.getGroupsOtherThanSelectedGroupAndItsDescendents(groupStockInHand._id, 100).then(function(groups) {
 
-            State.getAllStates(function(err, states) {
+            Ledger.getAllLedgers(function(err, ledgers) {
 
-                CreditDebit.getAllCreditDebits(function(err, creditDebits) {
+                State.getAllStates(function(err, states) {
 
-                    Ledger.getLedgerById(id, function(err, originalLedger) {
+                    CreditDebit.getAllCreditDebits(function(err, creditDebits) {
 
-                        if (err) {
-                            res.status(400).json(err);
-                        } 
+                        Ledger.getLedgerById(id, function(err, originalLedger) {
 
-                        req.checkBody('name', 'Ledger name is required.').notEmpty();
-                        req.checkBody('name', 'Duplicate ledger Name.').duplicateRecordExcludingCurrentRecord('name', ledgers, originalLedger[0].name);
+                            if (err) {
+                                res.status(400).json(err);
+                            } 
 
-                        if(parent.name == undefined) {
-                            req.checkBody('parent', 'Parent name is required.').notEmpty();
-                            req.checkBody('parent', 'Parent Name and ledger name should be different.').checkEquality(name, false);
-                            req.checkBody('parent', 'Please select parent group from list.').noRecordFound('name', groups);            
-                        } else {
-                            req.checkBody('parent.name', 'Parent name is required.').notEmpty();
-                            req.checkBody('parent.name', 'Parent Name and ledger name should be different.').checkEquality(name, false);
-                            req.checkBody('parent.name', 'Please select parent group from list.').noRecordFound('name', groups);
-                            parent = parent.name;
-                        }
+                            req.checkBody('name', 'Ledger name is required.').notEmpty();
+                            req.checkBody('name', 'Duplicate ledger Name.').duplicateRecordExcludingCurrentRecord('name', ledgers, originalLedger[0].name);
 
-                        if(!(state == undefined || state.name == undefined || state.name == null || state.name == '')) {
-                            req.checkBody('details.mailing.state.name', 'Please select state from list.').noRecordFound('name', states);
-                            state = state.name;
-                        } else {
-                            console.log(state);
-                            state = undefined;
-                        }
+                            if(parent.name == undefined) {
+                                req.checkBody('parent', 'Parent name is required.').notEmpty();
+                                req.checkBody('parent', 'Parent Name and ledger name should be different.').checkEquality(name, false);
+                                req.checkBody('parent', 'Please select parent group from list.').noRecordFound('name', groups);            
+                            } else {
+                                req.checkBody('parent.name', 'Parent name is required.').notEmpty();
+                                req.checkBody('parent.name', 'Parent Name and ledger name should be different.').checkEquality(name, false);
+                                req.checkBody('parent.name', 'Please select parent group from list.').noRecordFound('name', groups);
+                                parent = parent.name;
+                            }
 
-                        if(!(req.body.openingBalance == undefined || creditDebit == undefined || creditDebit.code == undefined || creditDebit.code == null || creditDebit == '')) {
-                            req.checkBody('openingBalance.creditOrDebit.code', 'Please select Credit or Debit from list.').noRecordFound('code', creditDebits);
-                            creditDebit = creditDebit.code;
-                        } else {
-                            creditDebit = undefined;
-                        }
-
-                        //Check for errors
-                        var errors = req.validationErrors();
-
-                        if(errors) {
-                            res.status(400).json({errors: errors});
-                        } else {
-
-                            Group.getGroupByName(parent, function(err, parentGroup) {
-
+                            if(!(state == undefined || state.name == undefined || state.name == null || state.name == '')) {
+                                req.checkBody('details.mailing.state.name', 'Please select state from list.').noRecordFound('name', states);
+                                state = state.name;
+                            } else {
                                 console.log(state);
+                                state = undefined;
+                            }
 
-                                State.getStateByName((state == undefined ? '' : state), function(err, selectedState) {
+                            if(!(req.body.openingBalance == undefined || creditDebit == undefined || creditDebit.code == undefined || creditDebit.code == null || creditDebit == '')) {
+                                req.checkBody('openingBalance.creditOrDebit.code', 'Please select Credit or Debit from list.').noRecordFound('code', creditDebits);
+                                creditDebit = creditDebit.code;
+                            } else {
+                                creditDebit = undefined;
+                            }
 
-                                    CreditDebit.getCreditDebitByCode(creditDebit == undefined ? 'Cr' : creditDebit, function(err, selectedCreditDebit) {
+                            //Check for errors
+                            var errors = req.validationErrors();
 
-                                        var newLedger = new Ledger({
-                                            _id: id,
-                                            name: name,
-                                            alias: alias || undefined,
-                                            parent: parentGroup[0],
-                                            isSystemLedger: isSystemLedger,
-                                            details: (req.body.details == undefined) ? undefined : {
-                                                mailing: (req.body.details.mailing == undefined) ? undefined : { 
-                                                    name: req.body.details.mailing.name || undefined,
-                                                    address: req.body.details.mailing.address || undefined,
-                                                    state: selectedState[0],
-                                                    pincode: req.body.details.mailing.pincode || undefined, 
+                            if(errors) {
+                                res.status(400).json({errors: errors});
+                            } else {
+
+                                Group.getGroupByName(parent, function(err, parentGroup) {
+
+                                    console.log(state);
+
+                                    State.getStateByName((state == undefined ? '' : state), function(err, selectedState) {
+
+                                        CreditDebit.getCreditDebitByCode(creditDebit == undefined ? 'Cr' : creditDebit, function(err, selectedCreditDebit) {
+
+                                            var newLedger = new Ledger({
+                                                _id: id,
+                                                name: name,
+                                                alias: alias || undefined,
+                                                parent: parentGroup[0],
+                                                isSystemLedger: isSystemLedger,
+                                                details: (req.body.details == undefined) ? undefined : {
+                                                    mailing: (req.body.details.mailing == undefined) ? undefined : { 
+                                                        name: req.body.details.mailing.name || undefined,
+                                                        address: req.body.details.mailing.address || undefined,
+                                                        state: selectedState[0],
+                                                        pincode: req.body.details.mailing.pincode || undefined, 
+                                                    },
+                                                    contact: (req.body.details.contact == undefined) ? undefined : {
+                                                        contactPerson: req.body.details.contact.contactPerson || undefined,
+                                                        mobile1: req.body.details.contact.mobile1 || undefined,
+                                                        mobile2: req.body.details.contact.mobile2 || undefined,
+                                                        email: req.body.details.contact.email || undefined
+                                                    },
+                                                    bank: (req.body.details.bank == undefined) ? undefined : {
+                                                        accountNumber: req.body.details.bank.accountNumber || undefined,
+                                                        branchName: req.body.details.bank.branchName || undefined,
+                                                        bsrCode: req.body.details.bank.bsrCode || undefined
+                                                    },
+                                                    tax: (req.body.details.tax == undefined) ? undefined : {
+                                                        panOrItNumber: req.body.details.tax.panOrItNumber || undefined,
+                                                        salesTaxNumber: req.body.details.tax.salesTaxNumber || undefined
+                                                    }
                                                 },
-                                                contact: (req.body.details.contact == undefined) ? undefined : {
-                                                    contactPerson: req.body.details.contact.contactPerson || undefined,
-                                                    mobile1: req.body.details.contact.mobile1 || undefined,
-                                                    mobile2: req.body.details.contact.mobile2 || undefined,
-                                                    email: req.body.details.contact.email || undefined
-                                                },
-                                                bank: (req.body.details.bank == undefined) ? undefined : {
-                                                    accountNumber: req.body.details.bank.accountNumber || undefined,
-                                                    branchName: req.body.details.bank.branchName || undefined,
-                                                    bsrCode: req.body.details.bank.bsrCode || undefined
-                                                },
-                                                tax: (req.body.details.tax == undefined) ? undefined : {
-                                                    panOrItNumber: req.body.details.tax.panOrItNumber || undefined,
-                                                    salesTaxNumber: req.body.details.tax.salesTaxNumber || undefined
+                                                openingBalance: {
+                                                    amount: (req.body.openingBalance == undefined || req.body.openingBalance.amount == undefined) ? 0 : req.body.openingBalance.amount,
+                                                    creditOrDebit: selectedCreditDebit[0]
                                                 }
-                                            },
-                                            openingBalance: {
-                                                amount: (req.body.openingBalance == undefined || req.body.openingBalance.amount == undefined) ? 0 : req.body.openingBalance.amount,
-                                                creditOrDebit: selectedCreditDebit[0]
-                                            }
 
-                                        });
+                                            });
 
-                                        Ledger.updateLedger(newLedger, function(err, result){
-                                            console.log(result);
-                                            if(err) { console.log(err); throw(err); }
-                                            else { res.status(200).json({success: {msg: 'Ledger ' + name + ' updated successfully'}}); }
+                                            Ledger.updateLedger(newLedger, function(err, result){
+                                                console.log(result);
+                                                if(err) { console.log(err); throw(err); }
+                                                else { res.status(200).json({success: {msg: 'Ledger ' + name + ' updated successfully'}}); }
+
+                                            });
 
                                         });
 
@@ -284,9 +292,9 @@ router.put('/:id', function(req, res, next) {
 
                                 });
 
-                            });
+                            }
 
-                        }
+                        });
 
                     });
 

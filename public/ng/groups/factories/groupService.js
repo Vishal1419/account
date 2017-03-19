@@ -16,7 +16,7 @@ angular
                                 return response.data;
                             });
             } else {
-                return $http.get('/api/group/withoutDescendents/' + groupName)
+                return $http.get('/api/group/otherThanSelectedGroupAndItsDescendents/' + groupName)
                             .then(function(response) {
                                 return response.data;
                             });                
